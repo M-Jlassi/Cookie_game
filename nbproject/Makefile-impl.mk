@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=cookie_game
+PROJECTNAME=Cookie_game
 
 # Active Configuration
 DEFAULTCONF=Debug

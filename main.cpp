@@ -49,7 +49,7 @@ void keyboard_init ()
     memset ( key, 0, sizeof ( key ) ) ;
 }
 
-#define NB_FRAMES_IN_A_JUMP 30
+#define NB_FRAMES_IN_A_JUMP 20
 
 void jump ( ALLEGRO_TIMER * timer )
 {
@@ -67,18 +67,11 @@ void jump ( ALLEGRO_TIMER * timer )
         
         // The player is in the first part of the jump
 
-        if ( time_since_jump_instruction <= NB_FRAMES_IN_A_JUMP / 2 )
+        if ( time_since_jump_instruction <= NB_FRAMES_IN_A_JUMP )
         {
-            player.y -= 5 ;
+            player.y -= 10 ;
         }
-
-        // The player is in the second part of the jump
-
-        else
-        {
-            player.y += 5 ;
-        }
-
+        
         return ;
 
     }
@@ -94,14 +87,47 @@ void jump ( ALLEGRO_TIMER * timer )
     
 }
 
-void gravity ()
+typedef struct ATTRACTING_ELEMENT {
+    int x_sup, y_sup ;
+    int x_inf, y_inf ;
+} ATTRACTING_ELEMENT ;
+
+#define NUMBER_OF_ELEMENTS 5
+ATTRACTING_ELEMENT elements [ NUMBER_OF_ELEMENTS ] ;
+
+/*
+void elements_init ()
 {
-    int pos_x = 750 ;
-    int pos_y = 250 ;
+    for ( int i = 0 ; i < NUMBER_OF_ELEMENTS ; i++ )
+    {
+        elements [ i ] .
+    }
+}
+*/
+
+void gravity ( ATTRACTING_ELEMENT element )
+{
     float dx, dy ;
     
-    dx = ( pos_x - player.x ) / 50 ;
-    dy = ( pos_y - player.y ) / 50 ;
+    if ( player.x > element.x_sup )
+    {
+        dx = ( element.x_sup - player.x ) / 50 ;
+    }
+    
+    if ( player.x < element.x_inf )
+    {
+        dx = ( element.x_inf - player.x ) / 50 ;
+    }
+    
+    if ( player.y > element.y_sup )
+    {
+        dy = ( element.y_sup - player.y ) / 50 ;
+    }
+    
+    if ( player.y < element.y_inf )
+    {
+        dy = ( element.y_inf - player.y ) / 50 ;
+    }
     
     player.x += dx ;
     player.y += dy ;
@@ -118,7 +144,7 @@ int main(int argc, char** argv) {
     ALLEGRO_EVENT_QUEUE * event_queue = al_create_event_queue () ;
     must_init ( event_queue, "event queue" ) ;
     
-    ALLEGRO_DISPLAY * display = al_create_display ( 1500, 500 ) ;
+    ALLEGRO_DISPLAY * display = al_create_display ( 1200, 900 ) ;
     must_init ( display, "display" ) ;
     
     must_init ( al_init_primitives_addon (), "primitives" ) ;
@@ -139,6 +165,12 @@ int main(int argc, char** argv) {
     keyboard_init () ;
     player_init () ;
     
+    ATTRACTING_ELEMENT element ;
+    element .x_inf = 175 ;
+    element .y_inf = 800 ;
+    element .x_sup = 1025;
+    element .y_inf = 800 ;
+    
     bool done = false ;
     
     while ( 1 ) 
@@ -157,7 +189,7 @@ int main(int argc, char** argv) {
                     player.x += 5 ;
                     
                 jump ( timer ) ;
-                gravity () ;
+                gravity ( element ) ;
                 
                 if ( key [ ALLEGRO_KEY_ESCAPE ] )
                     done = true ;
@@ -197,7 +229,17 @@ int main(int argc, char** argv) {
                 al_map_rgb_f ( 1, 1, 1 ) 
         ) ;
         
-        al_draw_filled_circle ( 750, 250, 10, al_map_rgb_f ( 1, 1, 1 ) ) ;
+        al_draw_filled_rectangle ( 0, 0, 100, 900, al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
+        
+        al_draw_filled_rectangle ( 1100, 0, 1200, 900, al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
+        
+        al_draw_filled_rectangle ( 0, 800, 1200, 900, al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
+        
+        al_draw_arc ( 175, 725, 100, 1.6, 1.6, al_map_rgb_f ( 0.35, 0.35, 0.35 ), 50 ) ;
+        
+        al_draw_arc ( 1025, 725, 100, 1.6, -1.6, al_map_rgb_f ( 0.35, 0.35, 0.35 ), 50 ) ;
+        
+        al_draw_filled_circle ( 1025, 800, 5, al_map_rgb_f ( 1, 1, 1 ) ) ;
         
         al_flip_display () ;
         
