@@ -11,10 +11,11 @@
  * Created on April 5, 2020, 5:38 PM
  */
 
-#include <cstdlib>
-#include <stdio.h>
-#include <allegro5/allegro5.h>
+#include <iostream>
 #include <allegro5/allegro_primitives.h>
+
+#include "player.h"
+#include "attracting_element.h"
 
 using namespace std;
 
@@ -26,74 +27,46 @@ void must_init ( bool test, const char * description )
     exit ( 1 ) ;
 }
 
-typedef struct PLAYER
-{
-    float x, y ;
-    bool is_in_jump ;
-    int jump_timer ;
-} PLAYER ;
 
-PLAYER player ;
-
-void player_init ()
-{
-    player.x = 100 ;
-    player.y = 150 ;
-    player.is_in_jump = false ;
-}
-
-unsigned char key [ ALLEGRO_KEY_MAX ] ;
 
 void keyboard_init ()
 {
     memset ( key, 0, sizeof ( key ) ) ;
 }
 
-#define NB_FRAMES_IN_A_JUMP 20
 
-void jump ( ALLEGRO_TIMER * timer )
+
+
+Player player ;
+
+
+
+std::ostream& operator<<(std::ostream &strm, const Player &player)
 {
-    
-    int time_since_jump_instruction = al_get_timer_count ( timer ) - player .jump_timer ;
-    
-    if ( player.is_in_jump )
-    {
-        
-        if ( time_since_jump_instruction > NB_FRAMES_IN_A_JUMP )
-        {
-            player .is_in_jump = false ;
-            return ;
-        }
-        
-        // The player is in the first part of the jump
+    string description_of_element = "Player:\n" ;
+    description_of_element += "X = " + std::to_string ( player.x ) + "\n";
+    description_of_element += "Y = " + std::to_string ( player.y ) + "\n";
+    description_of_element += "Is in jump? " + std::to_string ( player.is_in_jump ) + "\n";
+    description_of_element += "Jump timer = " + std::to_string ( player.jump_timer ) + "\n";
 
-        if ( time_since_jump_instruction <= NB_FRAMES_IN_A_JUMP )
-        {
-            player.y -= 10 ;
-        }
-        
-        return ;
-
-    }
-
-    if ( key [ ALLEGRO_KEY_SPACE ] )
-    {
-        if ( player.is_in_jump ) return ;
-        
-        player.is_in_jump = true ;
-        player.jump_timer = al_get_timer_count ( timer ) ;
-        
-    }
-    
+    return strm << description_of_element << endl ;
 }
 
-typedef struct ATTRACTING_ELEMENT {
-    int x_sup, y_sup ;
-    int x_inf, y_inf ;
-} ATTRACTING_ELEMENT ;
 
-#define NUMBER_OF_ELEMENTS 5
-ATTRACTING_ELEMENT elements [ NUMBER_OF_ELEMENTS ] ;
+
+
+
+std::ostream& operator<<(std::ostream &strm, const Attracting_element &element)
+{
+    string description_of_element = "Attracting element:\n" ;
+    description_of_element += "X inf = " + std::to_string ( element.x_inf ) + "\n";
+    description_of_element += "Y inf = " + std::to_string ( element.y_inf ) + "\n";
+    description_of_element += "X sup = " + std::to_string ( element.x_sup ) + "\n";
+    description_of_element += "Y sup = " + std::to_string ( element.y_sup ) + "\n";
+    description_of_element += "Horizontal? " + std::to_string ( element.horizontal ) + "\n";
+
+    return strm << description_of_element << endl ;
+}
 
 /*
 void elements_init ()
@@ -104,34 +77,6 @@ void elements_init ()
     }
 }
 */
-
-void gravity ( ATTRACTING_ELEMENT element )
-{
-    float dx, dy ;
-    
-    if ( player.x > element.x_sup )
-    {
-        dx = ( element.x_sup - player.x ) / 50 ;
-    }
-    
-    if ( player.x < element.x_inf )
-    {
-        dx = ( element.x_inf - player.x ) / 50 ;
-    }
-    
-    if ( player.y > element.y_sup )
-    {
-        dy = ( element.y_sup - player.y ) / 50 ;
-    }
-    
-    if ( player.y < element.y_inf )
-    {
-        dy = ( element.y_inf - player.y ) / 50 ;
-    }
-    
-    player.x += dx ;
-    player.y += dy ;
-}
 
 int main(int argc, char** argv) {
     
@@ -155,23 +100,21 @@ int main(int argc, char** argv) {
     
     ALLEGRO_EVENT event ;
     
-    al_start_timer ( timer ) ;
-    
-    int x_triangle = 0 ;
-    
     #define KEY_SEEN 1
     #define KEY_RELEASED 2
-    
+
+    al_start_timer ( timer ) ;
+
     keyboard_init () ;
-    player_init () ;
+    Player player ;
     
-    ATTRACTING_ELEMENT element ;
-    element .x_inf = 175 ;
-    element .y_inf = 800 ;
-    element .x_sup = 1025;
-    element .y_inf = 800 ;
+    Attracting_element floor ( 175, 800, 1025, 800 ) ;
+    Attracting_element right_wall ( 1100, 0, 1100, 725 ) ;
     
-    bool done = false ;
+    vector<Attracting_element> elements ;
+    elements .push_back ( floor ) ;
+    elements .push_back ( right_wall ) ;
+    
     
     while ( 1 ) 
     {
@@ -182,24 +125,21 @@ int main(int argc, char** argv) {
         {
             case ALLEGRO_EVENT_TIMER:
                 
-                if ( key [ ALLEGRO_KEY_LEFT ] )
-                    player.x -= 5 ;
-                
-                if ( key [ ALLEGRO_KEY_RIGHT ] )
-                    player.x += 5 ;
+                player .move () ;
                     
-                jump ( timer ) ;
-                gravity ( element ) ;
+                player .gravity ( elements ) ;
+                
+                player .jump ( timer ) ;
                 
                 if ( key [ ALLEGRO_KEY_ESCAPE ] )
-                    done = true ;
-                
+                    player .done = true ;
+
                 // Ensures no key is missed between two iterations of ALLEGRO_EVENT_TIMER
                 // More info here: https://github.com/liballeg/allegro_wiki/wiki/Allegro-Vivace%3A-Input#how-it-works
-                
+
                 for ( int i = 0 ; i < ALLEGRO_KEY_MAX ; i++ )
                     key [ i ] &= KEY_SEEN ;
-                
+
                 break ;
                 
             case ALLEGRO_EVENT_KEY_DOWN:
@@ -215,7 +155,7 @@ int main(int argc, char** argv) {
         }
         
         if ( event .type == ALLEGRO_EVENT_DISPLAY_CLOSE ) break ;
-        if ( done ) break ;
+        if ( player .done ) break ;
         
         al_clear_to_color ( al_map_rgb_f ( 0, 0, 0 ) ) ;
         
@@ -229,17 +169,29 @@ int main(int argc, char** argv) {
                 al_map_rgb_f ( 1, 1, 1 ) 
         ) ;
         
-        al_draw_filled_rectangle ( 0, 0, 100, 900, al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
+        // Left wall
+        al_draw_filled_rectangle ( 0, 0, 100, 900,
+                al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
         
-        al_draw_filled_rectangle ( 1100, 0, 1200, 900, al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
+        // Right wall
+        al_draw_filled_rectangle ( 1100, 0, 1200, 900,
+                al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
         
-        al_draw_filled_rectangle ( 0, 800, 1200, 900, al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
+        // Floor
+        al_draw_filled_rectangle ( 0, 800, 1200, 900,
+                al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
         
-        al_draw_arc ( 175, 725, 100, 1.6, 1.6, al_map_rgb_f ( 0.35, 0.35, 0.35 ), 50 ) ;
+        // Left arc
+        al_draw_arc ( 175, 725, 100, 1.6, 1.6,
+                al_map_rgb_f ( 0.35, 0.35, 0.35 ), 50 ) ;
         
-        al_draw_arc ( 1025, 725, 100, 1.6, -1.6, al_map_rgb_f ( 0.35, 0.35, 0.35 ), 50 ) ;
+        // Right arc
+        al_draw_arc ( 1025, 725, 100, 1.6, -1.6,
+                al_map_rgb_f ( 0.35, 0.35, 0.35 ), 50 ) ;
         
-        al_draw_filled_circle ( 1025, 800, 5, al_map_rgb_f ( 1, 1, 1 ) ) ;
+        // Point
+        al_draw_filled_circle ( 1100, 0, 5,
+                al_map_rgb_f ( 1, 1, 1 ) ) ;
         
         al_flip_display () ;
         
