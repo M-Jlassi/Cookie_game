@@ -11,13 +11,15 @@
  * Created on April 5, 2020, 5:38 PM
  */
 
-#include <iostream>
 #include <allegro5/allegro_primitives.h>
 
 #include "player.h"
 #include "attracting_element.h"
+#include <iostream>
 
 using namespace std;
+
+unsigned char key [ ALLEGRO_KEY_MAX ] ;
 
 void must_init ( bool test, const char * description )
 {
@@ -36,11 +38,6 @@ void keyboard_init ()
 
 
 
-
-Player player ;
-
-
-
 std::ostream& operator<<(std::ostream &strm, const Player &player)
 {
     string description_of_element = "Player:\n" ;
@@ -56,17 +53,7 @@ std::ostream& operator<<(std::ostream &strm, const Player &player)
 
 
 
-std::ostream& operator<<(std::ostream &strm, const Attracting_element &element)
-{
-    string description_of_element = "Attracting element:\n" ;
-    description_of_element += "X inf = " + std::to_string ( element.x_inf ) + "\n";
-    description_of_element += "Y inf = " + std::to_string ( element.y_inf ) + "\n";
-    description_of_element += "X sup = " + std::to_string ( element.x_sup ) + "\n";
-    description_of_element += "Y sup = " + std::to_string ( element.y_sup ) + "\n";
-    description_of_element += "Horizontal? " + std::to_string ( element.horizontal ) + "\n";
 
-    return strm << description_of_element << endl ;
-}
 
 /*
 void elements_init ()
@@ -106,19 +93,22 @@ int main(int argc, char** argv) {
     al_start_timer ( timer ) ;
 
     keyboard_init () ;
-    Player player ;
     
     Attracting_element floor ( 175, 800, 1025, 800 ) ;
-    Attracting_element right_wall ( 1100, 0, 1100, 725 ) ;
+    Attracting_element right_wall ( 1100, 725, 1100, 0 ) ;
+    Attracting_element right_edge ( 1025, 800, 1100, 725 ) ;
+    
+    Player player ( & floor ) ;
     
     vector<Attracting_element> elements ;
     elements .push_back ( floor ) ;
     elements .push_back ( right_wall ) ;
+    //elements .push_back ( right_edge ) ;
+    
     
     
     while ( 1 ) 
-    {
-        
+    {        
         al_wait_for_event ( event_queue, &event ) ;
         
         switch ( event .type )
@@ -190,7 +180,7 @@ int main(int argc, char** argv) {
                 al_map_rgb_f ( 0.35, 0.35, 0.35 ), 50 ) ;
         
         // Point
-        al_draw_filled_circle ( 1100, 0, 5,
+        al_draw_filled_circle ( 1025, 800, 5,
                 al_map_rgb_f ( 1, 1, 1 ) ) ;
         
         al_flip_display () ;

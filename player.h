@@ -41,10 +41,11 @@ public :
     const int number_of_frames_in_a_jump = 20 ;
     
     
-    Player () ;
-    
+    Player ( Attracting_element * element ) ;
     
     void move () ;
+    
+    std::pair <int, int> get_direction_x_y () ;
     
     void jump ( ALLEGRO_TIMER * timer ) ;
     
@@ -57,6 +58,8 @@ public :
     std::pair <float, float> get_speed ( Attracting_element * element ) ;
     
     std::pair <float, float> smoothen_landing ( std::pair <float, float> speed_x_y ) ;
+    
+    std::pair<float, float> get_player_ratio_depending_on_the_current_attracting_element () ;
     
 } ;
 

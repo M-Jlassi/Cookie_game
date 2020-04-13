@@ -14,19 +14,23 @@
 #ifndef ATTRACTING_ELEMENT_H
 #define ATTRACTING_ELEMENT_H
 
+#include <iostream>
+#include <string>
 
 class Attracting_element
 {
     
 public:
     
-    int x_inf, y_inf ;
-    int x_sup, y_sup ;
+    int left_boundary_x, left_boundary_y ;
+    int right_boundary_x, right_boundary_y ;
     bool horizontal ;
+    float x_ratio_for_one_y, y_ratio_for_one_x ;
     
     Attracting_element () ;
     
-    Attracting_element ( int x_inf, int y_inf, int x_sup, int y_sup ) ;
+    Attracting_element ( int left_boundary_x, int left_boundary_y,
+        int right_boundary_x, int right_boundary_y ) ;
     
     Attracting_element ( Attracting_element const& element_to_copy ) ;
     
@@ -35,6 +39,8 @@ public:
     bool operator == (const Attracting_element& element) ;
     
 } ;
+
+std::ostream& operator<<(std::ostream &strm, const Attracting_element &element) ;
 
 
 #endif /* ATTRACTING_ELEMENT_H */
