@@ -45,7 +45,7 @@ public :
     
     void move () ;
     
-    std::pair <int, int> get_direction_x_y () ;
+    std::pair <float, float> get_direction_x_y () ;
     
     void jump ( ALLEGRO_TIMER * timer ) ;
     
@@ -55,7 +55,7 @@ public :
     
     void get_closest_element ( std::vector<Attracting_element> elements ) ;
     
-    std::pair <float, float> get_speed ( Attracting_element * element ) ;
+    std::pair <float, float> get_speed () ;
     
     std::pair <float, float> smoothen_landing ( std::pair <float, float> speed_x_y ) ;
     

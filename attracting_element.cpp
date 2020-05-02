@@ -26,8 +26,11 @@ Attracting_element::Attracting_element ( int left_boundary_x, int left_boundary_
         horizontal = false ;
     }
     
-    float difference_between_x = right_boundary_x - left_boundary_x ;
-    float difference_between_y = right_boundary_y - left_boundary_y ;
+    
+    
+    
+    float difference_between_x = abs ( right_boundary_x - left_boundary_x ) ;
+    float difference_between_y = abs ( right_boundary_y - left_boundary_y ) ;
     
     if ( difference_between_x == 0 )
     {
@@ -47,6 +50,41 @@ Attracting_element::Attracting_element ( int left_boundary_x, int left_boundary_
         y_ratio_for_one_x = difference_between_y / difference_between_x ;
     }
     
+    
+    
+    
+    if ( left_boundary_x < right_boundary_x )
+    {
+        x_direction = 1 ;
+    }
+    
+    else if ( left_boundary_x > right_boundary_x )
+    {
+        x_direction = -1 ;
+    }
+    
+    else
+    {
+        x_direction = 0 ;
+    }
+    
+    
+    
+    if ( left_boundary_y < right_boundary_y )
+    {
+        y_direction = 1 ;
+    }
+    
+    else if ( left_boundary_y > right_boundary_y )
+    {
+        y_direction = -1 ;
+    }
+    
+    else
+    {
+        y_direction = 0 ;
+    }
+    
 }
 
 Attracting_element::Attracting_element ( Attracting_element const& element_to_copy ) :
@@ -56,6 +94,8 @@ Attracting_element::Attracting_element ( Attracting_element const& element_to_co
     right_boundary_y ( element_to_copy .right_boundary_y ),
     x_ratio_for_one_y ( element_to_copy .x_ratio_for_one_y ),
     y_ratio_for_one_x ( element_to_copy .y_ratio_for_one_x ),
+    x_direction ( element_to_copy .x_direction ),
+    y_direction ( element_to_copy .y_direction ),
     horizontal ( element_to_copy .horizontal ) {}
 
 Attracting_element& Attracting_element::operator = ( Attracting_element const& element_to_copy )
@@ -68,6 +108,8 @@ Attracting_element& Attracting_element::operator = ( Attracting_element const& e
         right_boundary_y = element_to_copy .right_boundary_y ;
         x_ratio_for_one_y = element_to_copy .x_ratio_for_one_y ;
         y_ratio_for_one_x = element_to_copy .y_ratio_for_one_x ;
+        x_direction = element_to_copy .x_direction,
+        y_direction = element_to_copy .y_direction,
         horizontal = element_to_copy .horizontal ;
     }
 
@@ -98,6 +140,9 @@ std::ostream& operator<<(std::ostream &strm, const Attracting_element &element)
     
     description_of_element += "X ratio for one Y = " + std::to_string ( element.x_ratio_for_one_y ) + "\n";
     description_of_element += "Y ratio for one X = " + std::to_string ( element.y_ratio_for_one_x ) + "\n";
+    
+    description_of_element += "X direction = " + std::to_string ( element.x_direction ) + "\n";
+    description_of_element += "Y direction = " + std::to_string ( element.y_direction ) + "\n";
     
     description_of_element += "Horizontal? " + std::to_string ( element.horizontal ) + "\n";
 

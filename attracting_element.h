@@ -26,6 +26,7 @@ public:
     int right_boundary_x, right_boundary_y ;
     bool horizontal ;
     float x_ratio_for_one_y, y_ratio_for_one_x ;
+    int x_direction, y_direction ;
     
     Attracting_element () ;
     
