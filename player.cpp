@@ -21,17 +21,19 @@ void Player::move ()
     
     if ( key [ ALLEGRO_KEY_LEFT ] )
     {
-        x += direction_x_y .first * ( - 15 ) ;
-        y += direction_x_y .second * ( - 15 ) ;
+        x += direction_x_y .first * ( - 5 ) ;
+        y += direction_x_y .second * ( - 5 ) ;
     }
         
         
 
     if ( key [ ALLEGRO_KEY_RIGHT ] )
     {
-        x += direction_x_y .first * 15 ;
-        y += direction_x_y .second * 15 ;
+        x += direction_x_y .first * 5 ;
+        y += direction_x_y .second * 5 ;
     }
+    //cout << "X: " << x << endl ;
+    //cout << "Y: " << y << endl ;
         
 }
 
@@ -44,22 +46,19 @@ std::pair <float, float> Player::get_direction_x_y ()
     ratios_reduced_for_directions .first = element_attracting_the_player -> x_ratio_for_one_y ;
     ratios_reduced_for_directions .second = element_attracting_the_player -> y_ratio_for_one_x ;
     
+    //cout << "Element ratio X for one Y: " << ratios_reduced_for_directions .first << endl ;
+    //cout << "Element ratio Y for one X: " << ratios_reduced_for_directions .second << endl ;
+    
     if ( element_attracting_the_player -> x_ratio_for_one_y
         > element_attracting_the_player -> y_ratio_for_one_x)
     {
-        ratios_reduced_for_directions .second =
-            ratios_reduced_for_directions .second / ratios_reduced_for_directions .first ;
-        ratios_reduced_for_directions .first =
-            ratios_reduced_for_directions .first / ratios_reduced_for_directions .first ;
+        ratios_reduced_for_directions .first = 1 ;
     }
     
     else if ( element_attracting_the_player -> x_ratio_for_one_y
         < element_attracting_the_player -> y_ratio_for_one_x)
     {
-        ratios_reduced_for_directions .first =
-            ratios_reduced_for_directions .first / ratios_reduced_for_directions .second ;
-        ratios_reduced_for_directions .second =
-            ratios_reduced_for_directions .second / ratios_reduced_for_directions .second ;
+        ratios_reduced_for_directions .second = 1 ;
     }
     
     direction_x_y .first = 
@@ -69,6 +68,9 @@ std::pair <float, float> Player::get_direction_x_y ()
     direction_x_y .second = 
             ratios_reduced_for_directions .second *
             element_attracting_the_player -> y_direction ;
+    
+    //cout << "Direction X: " << direction_x_y .first << endl ;
+    //cout << "Direction Y: " << direction_x_y .second << endl << endl ;
     
     return direction_x_y ;
 }
@@ -134,8 +136,8 @@ void Player::gravity ( std::vector<Attracting_element> elements )
 
     //speed_x_y = smoothen_landing ( speed_x_y ) ;
 
-    cout << "Speed X: " <<  speed_x_y .first << endl ;
-    cout << "Speed Y: " <<  speed_x_y .second << endl ;
+    //cout << "Speed X: " <<  speed_x_y .first << endl ;
+    //cout << "Speed Y: " <<  speed_x_y .second << endl ;
     
     x += speed_x_y .first ;
     y += speed_x_y .second ;
@@ -203,13 +205,13 @@ std::pair <float, float> Player::get_speed ()
     
     std::pair <float, float> player_ratios = get_player_ratio_depending_on_the_current_attracting_element () ;
     
-    /*
+    
     float difference_between_lowest_ratios ;
     
     if ( player_ratios .first <= player_ratios .second )
     {
-        cout << player_ratios .first << endl ;
-        cout << element_attracting_the_player -> x_ratio_for_one_y << endl ;
+        //cout << player_ratios .first << endl ;
+        //cout << element_attracting_the_player -> x_ratio_for_one_y << endl ;
         difference_between_lowest_ratios = abs (
                 player_ratios .first - element_attracting_the_player -> x_ratio_for_one_y
         ) ;
@@ -217,18 +219,16 @@ std::pair <float, float> Player::get_speed ()
     
     else if ( player_ratios .first > player_ratios .second )
     {
-        cout << player_ratios .second << endl ;
-        cout << element_attracting_the_player -> y_ratio_for_one_x << endl ;
+        //cout << player_ratios .second << endl ;
+        //cout << element_attracting_the_player -> y_ratio_for_one_x << endl ;
         difference_between_lowest_ratios = abs (
                 player_ratios .second - element_attracting_the_player -> y_ratio_for_one_x
         ) ;
     }
-    */
     
-    if ( player_ratios .first == element_attracting_the_player -> x_ratio_for_one_y
-        || player_ratios .second == element_attracting_the_player -> y_ratio_for_one_x )
+    if ( difference_between_lowest_ratios < 0.1 )
     {
-        cout << "YES" << endl ;
+        //cout << "YES" << endl ;
         speed_x_y .first = 0 ;
         speed_x_y .second = 0 ;
     }
@@ -306,8 +306,15 @@ std::pair <float, float> Player::get_speed ()
 
 std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> speed_x_y )
 {
-    //std::pair <float, float> ratios = get_player_ratio_depending_on_the_current_attracting_element () ;
+    std::pair <float, float> player_ratios_current = get_player_ratio_depending_on_the_current_attracting_element () ;
+    std::pair <float, float> player_ratios_after = calculate_ratios (
+        element_attracting_the_player->left_boundary_x,
+        element_attracting_the_player->left_boundary_y,
+        x + speed_x_y .first,
+        y + speed_x_y .second
+    ) ;
     
+    /*
     if ( ( speed_x_y .first > 0  &&
             x + speed_x_y .first > element_attracting_the_player -> left_boundary_x )
         || ( speed_x_y .first < 0  &&
@@ -322,15 +329,55 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
             y + speed_x_y .second < element_attracting_the_player -> left_boundary_y ) )
     {
         speed_x_y .second /= 2 ;
+    }*/
+    float difference_between_lowest_ratios_current ;
+    float difference_between_lowest_ratios_after ;
+    
+    if ( player_ratios_current .first <= player_ratios_current .second )
+    {
+        //cout << "Player X ratio for one Y: " << player_ratios .first << endl ;
+        //cout << "Element X ratio for one Y: " << element_attracting_the_player -> x_ratio_for_one_y << endl ;
+        difference_between_lowest_ratios_current = abs (
+                player_ratios_current .first - element_attracting_the_player -> x_ratio_for_one_y
+        ) ;
+        difference_between_lowest_ratios_after = abs (
+                player_ratios_after .first - element_attracting_the_player -> x_ratio_for_one_y
+        ) ;
     }
+    
+    else if ( player_ratios_current .first > player_ratios_current .second )
+    {
+        //cout << "Player Y ratio for one X: " << player_ratios .second << endl ;
+        //cout << "Element Y ratio for one X: " << element_attracting_the_player -> y_ratio_for_one_x << endl ;
+        difference_between_lowest_ratios_current = abs (
+                player_ratios_current .second - element_attracting_the_player -> y_ratio_for_one_x
+        ) ;
+        difference_between_lowest_ratios_after = abs (
+                player_ratios_after .second - element_attracting_the_player -> y_ratio_for_one_x
+        ) ;
+    }
+    /*
+    if ( difference_between_lowest_ratios_after > difference_between_lowest_ratios_current )
+    {
+        cout << difference_between_lowest_ratios_current << endl ;
+        cout << difference_between_lowest_ratios_after << endl << endl ;
+    }
+    */
+    //cout << "Difference between lowest ratios: " << difference_between_lowest_ratios << endl << endl ;
+    
+    
 
     return speed_x_y ;
 }
 
+
+
+
+
 std::pair<float, float> Player::get_player_ratio_depending_on_the_current_attracting_element ()
 {
-    float difference_between_x = abs ( element_attracting_the_player->left_boundary_x - x ) ;
-    float difference_between_y = abs ( element_attracting_the_player->left_boundary_y - y ) ;
+    float difference_between_x = abs ( x - element_attracting_the_player->left_boundary_x ) ;
+    float difference_between_y = abs ( y - element_attracting_the_player->left_boundary_y ) ;
     
     float x_ratio_for_one_y ;
     float y_ratio_for_one_x ;
@@ -352,15 +399,58 @@ std::pair<float, float> Player::get_player_ratio_depending_on_the_current_attrac
         x_ratio_for_one_y = difference_between_x / difference_between_y ;
         y_ratio_for_one_x = difference_between_y / difference_between_x ;
     }
-    
+    /*
     cout << "Ratio element X: " << element_attracting_the_player -> x_ratio_for_one_y << endl ;
     cout << "Ratio element Y: " << element_attracting_the_player -> y_ratio_for_one_x << endl ;
     cout << "Ratio player X: " << x_ratio_for_one_y << endl ;
     cout << "Ratio player Y: " << y_ratio_for_one_x << endl << endl << endl ;
-    
+    */
     
     std::pair <float, float> player_ratios_x_y = std::pair<float, float> ( x_ratio_for_one_y, y_ratio_for_one_x ) ;
     
     return player_ratios_x_y ;
 }
+
+
+
     
+std::pair <float, float> calculate_ratios ( float x1, float y1, float x2, float y2 )
+{
+    // First is x_ratio_for_one_y
+    // Second is y_ratio_for_one_x
+    
+    std::pair <float, float> ratios ;
+    
+    float difference_between_x = x2 - x1 ;
+    float difference_between_y = y2 - y1;
+    
+    if ( difference_between_x == 0 )
+    {
+        ratios .first = 0 ;
+        ratios .second = 1 ;
+    }
+    
+    else if ( difference_between_y == 0 )
+    {
+        ratios .first = 1 ;
+        ratios .second = 0 ;
+    }
+    
+    else
+    {
+        ratios .first = difference_between_x / difference_between_y ;
+        ratios .second = difference_between_y / difference_between_x ;
+    }
+    /*
+    if ( x1 > x2 )
+    {
+        ratios .first *= -1 ;
+    }
+    
+    if ( y1 > y2 )
+    {
+        ratios .second *= -1 ;
+    }
+    */
+    return ratios ;
+}

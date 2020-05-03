@@ -48,7 +48,7 @@ std::ostream& operator<<(std::ostream &strm, const Player &player)
 
     return strm << description_of_element << endl ;
 }
-
+/*
 std::pair <float, float> calculate_ratios ( float x1, float x2, float y1, float y2 )
 {
     // First is x_ratio_for_one_y
@@ -78,7 +78,7 @@ std::pair <float, float> calculate_ratios ( float x1, float x2, float y1, float 
     }
     
     return ratios ;
-}
+}*/
 
 std::pair <float, float> calculate_distance_between_player_and_attracting_element (
     Player player )
@@ -89,9 +89,11 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     test_coordinates_from_player_position .first = player .x ;
     test_coordinates_from_player_position .second = player .y ;
     
-    std::pair <float, float> test_ratios = calculate_ratios (
-            player .element_attracting_the_player -> left_boundary_x, player .x,
-            player .element_attracting_the_player -> left_boundary_y, player .y
+    std::pair <float, float> current_test_ratios = calculate_ratios (
+            player .element_attracting_the_player -> left_boundary_x,
+            player .element_attracting_the_player -> left_boundary_y,
+            player .x,
+            player .y
     );
     
     float direction_to_follow_x ;
@@ -115,8 +117,18 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     
     else
     {
-        direction_to_follow_x = player .element_attracting_the_player -> y_ratio_for_one_x ;
-        direction_to_follow_y = player .element_attracting_the_player -> x_ratio_for_one_y ;
+        if ( player .element_attracting_the_player -> y_ratio_for_one_x
+            > player .element_attracting_the_player -> x_ratio_for_one_y)
+        {
+            direction_to_follow_x = player .element_attracting_the_player -> y_ratio_for_one_x ;
+            direction_to_follow_y = 1 ;
+        }
+        
+        else
+        {
+            direction_to_follow_x = 1 ;
+            direction_to_follow_y = player .element_attracting_the_player -> x_ratio_for_one_y ;
+        }
     }
     
     // Bottom-left corner
@@ -166,24 +178,99 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     
     //bool element_found = false ;
     //int counter = 0 ;
+    std::pair <float, float> previous_test_ratios ;
+    
+    float current_difference_between_lowest_ratios ;
+    
+   /* if ( player .element_attracting_the_player -> x_ratio_for_one_y
+            <= player .element_attracting_the_player -> y_ratio_for_one_x )
+    {
+        //cout << "Player X ratio for one Y: " << player_ratios .first << endl ;
+        //cout << "Element X ratio for one Y: " << element_attracting_the_player -> x_ratio_for_one_y << endl ;
+        current_difference_between_lowest_ratios = abs (
+                current_test_ratios .first
+                - ( player .element_attracting_the_player -> x_ratio_for_one_y
+                        * player .element_attracting_the_player -> x_direction )
+        ) ;
+    }
+
+    else
+    {*/
+        //cout << "Player Y ratio for one X: " << player_ratios .second << endl ;
+        //cout << "Element Y ratio for one X: " << element_attracting_the_player -> y_ratio_for_one_x << endl ;
+    
+    current_difference_between_lowest_ratios = abs (
+            current_test_ratios .second
+            - ( player .element_attracting_the_player -> y_ratio_for_one_x 
+                    * player .element_attracting_the_player -> y_direction )
+    ) ;
+    //}
+    
+    float previous_difference_between_lowest_ratios ;
+    
     
     for ( int i = 0 ; i < 100 ; i++ )
     {
+        /*
         if ( test_ratios .first == player .element_attracting_the_player -> x_ratio_for_one_y
             || test_ratios .second == player .element_attracting_the_player -> y_ratio_for_one_x )
         {
             break ;
         }
+        */
+        
+        //cout << "Direction to follow X: " << direction_to_follow_x << endl ;
+        //cout << "Direction to follow Y: " << direction_to_follow_y << endl << endl ;
         
         test_coordinates_from_player_position .first += direction_to_follow_x ;
         test_coordinates_from_player_position .second += direction_to_follow_y ;
         
-        test_ratios = calculate_ratios (
+        previous_test_ratios = current_test_ratios ;
+        previous_difference_between_lowest_ratios = current_difference_between_lowest_ratios ;
+        
+        current_test_ratios = calculate_ratios (
             player .element_attracting_the_player -> left_boundary_x,
-            test_coordinates_from_player_position .first,
             player .element_attracting_the_player -> left_boundary_y,
+            test_coordinates_from_player_position .first,
             test_coordinates_from_player_position .second
         ) ;
+/*
+        if ( player .element_attracting_the_player -> x_ratio_for_one_y
+            <= player .element_attracting_the_player -> y_ratio_for_one_x )
+        {
+            cout << "Previous player X ratio for one Y: " << previous_test_ratios .first << endl ;
+            cout << "Current player X ratio for one Y: " << current_test_ratios .first << endl ;
+            cout << "Element X ratio for one Y: " << ( player .element_attracting_the_player -> x_ratio_for_one_y
+                        * player .element_attracting_the_player -> x_direction ) << endl ;
+            current_difference_between_lowest_ratios = abs (
+                    current_test_ratios .first
+                    - ( player .element_attracting_the_player -> x_ratio_for_one_y
+                        * player .element_attracting_the_player -> x_direction )
+            ) ;
+        }
+
+        else
+        {*/
+            cout << "Previous player Y ratio for one X: " << previous_test_ratios .second << endl ;
+            cout << "Current player Y ratio for one X: " << current_test_ratios .second << endl ;
+            cout << "Element Y ratio for one X: " << ( player .element_attracting_the_player -> y_ratio_for_one_x 
+                        * player .element_attracting_the_player -> y_direction ) << endl ;
+            
+            current_difference_between_lowest_ratios = abs (
+                    current_test_ratios .second 
+                    - ( player .element_attracting_the_player -> y_ratio_for_one_x 
+                        * player .element_attracting_the_player -> y_direction )
+            ) ;
+       // }
+        
+        cout << "Previous difference between lowest ratios: " << previous_difference_between_lowest_ratios << endl ;
+        cout << "Current difference between lowest ratios: " << current_difference_between_lowest_ratios << endl << endl ;
+        
+        if ( current_difference_between_lowest_ratios > previous_difference_between_lowest_ratios )
+        {
+            cout << "Found element at " << i << "th iteration" << endl << endl << endl ;
+            break ;
+        }
     }
     
 

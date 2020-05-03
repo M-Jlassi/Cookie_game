@@ -63,5 +63,7 @@ public :
     
 } ;
 
+std::pair <float, float> calculate_ratios ( float x1, float y1, float x2, float y2 ) ;
+
 #endif /* PLAYER_H */
 
