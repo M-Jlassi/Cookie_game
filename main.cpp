@@ -17,6 +17,8 @@
 #include "attracting_element.h"
 #include <iostream>
 
+#include <string>
+
 using namespace std;
 
 unsigned char key [ ALLEGRO_KEY_MAX ] ;
@@ -80,6 +82,7 @@ std::pair <float, float> calculate_ratios ( float x1, float x2, float y1, float 
     return ratios ;
 }*/
 
+/*
 std::pair <float, float> calculate_distance_between_player_and_attracting_element (
     Player player )
 {
@@ -89,7 +92,7 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     test_coordinates_from_player_position .first = player .x ;
     test_coordinates_from_player_position .second = player .y ;
     
-    std::pair <float, float> current_test_ratios = calculate_ratios (
+    float current_test_ratio = calculate_ratio (
             player .element_attracting_the_player -> left_boundary_x,
             player .element_attracting_the_player -> left_boundary_y,
             player .x,
@@ -178,9 +181,9 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     
     //bool element_found = false ;
     //int counter = 0 ;
-    std::pair <float, float> previous_test_ratios ;
+    float previous_test_ratio ;
     
-    float current_difference_between_lowest_ratios ;
+    float current_difference_between_ratios ;
     
    /* if ( player .element_attracting_the_player -> x_ratio_for_one_y
             <= player .element_attracting_the_player -> y_ratio_for_one_x )
@@ -198,19 +201,20 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     {*/
         //cout << "Player Y ratio for one X: " << player_ratios .second << endl ;
         //cout << "Element Y ratio for one X: " << element_attracting_the_player -> y_ratio_for_one_x << endl ;
-    
-    current_difference_between_lowest_ratios = abs (
-            current_test_ratios .second
-            - ( player .element_attracting_the_player -> y_ratio_for_one_x 
-                    * player .element_attracting_the_player -> y_direction )
+    /*
+    float element_ratio = calculate_ratio (
+        player .element_attracting_the_player -> left_boundary_x,
+        player .element_attracting_the_player -> left_boundary_y,
+        player .element_attracting_the_player -> right_boundary_x,
+        player .element_attracting_the_player -> right_boundary_y
     ) ;
-    //}
     
-    float previous_difference_between_lowest_ratios ;
+    current_difference_between_ratios = abs ( current_test_ratio - element_ratio ) ;
     
+    float previous_difference_between_ratios ;
     
     for ( int i = 0 ; i < 100 ; i++ )
-    {
+    {*/
         /*
         if ( test_ratios .first == player .element_attracting_the_player -> x_ratio_for_one_y
             || test_ratios .second == player .element_attracting_the_player -> y_ratio_for_one_x )
@@ -222,13 +226,13 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
         //cout << "Direction to follow X: " << direction_to_follow_x << endl ;
         //cout << "Direction to follow Y: " << direction_to_follow_y << endl << endl ;
         
-        test_coordinates_from_player_position .first += direction_to_follow_x ;
+       /* test_coordinates_from_player_position .first += direction_to_follow_x ;
         test_coordinates_from_player_position .second += direction_to_follow_y ;
         
-        previous_test_ratios = current_test_ratios ;
-        previous_difference_between_lowest_ratios = current_difference_between_lowest_ratios ;
+        previous_test_ratio = current_test_ratio ;
+        previous_difference_between_ratios = current_difference_between_ratios ;
         
-        current_test_ratios = calculate_ratios (
+        current_test_ratio = calculate_ratio (
             player .element_attracting_the_player -> left_boundary_x,
             player .element_attracting_the_player -> left_boundary_y,
             test_coordinates_from_player_position .first,
@@ -251,22 +255,17 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
 
         else
         {*/
-            cout << "Previous player Y ratio for one X: " << previous_test_ratios .second << endl ;
-            cout << "Current player Y ratio for one X: " << current_test_ratios .second << endl ;
-            cout << "Element Y ratio for one X: " << ( player .element_attracting_the_player -> y_ratio_for_one_x 
-                        * player .element_attracting_the_player -> y_direction ) << endl ;
+           /* cout << "Previous player ratio: " << previous_test_ratio << endl ;
+            cout << "Current player ratio: " << current_test_ratio << endl ;
+            cout << "Element ratio: " << element_ratio << endl ;
             
-            current_difference_between_lowest_ratios = abs (
-                    current_test_ratios .second 
-                    - ( player .element_attracting_the_player -> y_ratio_for_one_x 
-                        * player .element_attracting_the_player -> y_direction )
-            ) ;
-       // }
+            current_difference_between_ratios = abs ( current_test_ratio - element_ratio ) ;
+       
         
-        cout << "Previous difference between lowest ratios: " << previous_difference_between_lowest_ratios << endl ;
-        cout << "Current difference between lowest ratios: " << current_difference_between_lowest_ratios << endl << endl ;
+        cout << "Previous difference between ratios: " << previous_difference_between_ratios << endl ;
+        cout << "Current difference between ratios: " << current_difference_between_ratios << endl << endl ;
         
-        if ( current_difference_between_lowest_ratios > previous_difference_between_lowest_ratios )
+        if ( current_difference_between_ratios > previous_difference_between_ratios )
         {
             cout << "Found element at " << i << "th iteration" << endl << endl << endl ;
             break ;
@@ -284,11 +283,11 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     cout << "Ratio X for one Y: " << player .element_attracting_the_player -> x_ratio_for_one_y << endl ;
     cout << "Ratio Y for one X: " << player .element_attracting_the_player -> y_ratio_for_one_x << endl << endl ;
     */
-    coordinates_of_closest_point .first = test_coordinates_from_player_position .first ;
+    /*coordinates_of_closest_point .first = test_coordinates_from_player_position .first ;
     coordinates_of_closest_point .second = test_coordinates_from_player_position .second ;
     
     return coordinates_of_closest_point ;
-}
+}*/
 
 
 
@@ -302,8 +301,220 @@ void elements_init ()
 }
 */
 
-int main(int argc, char** argv) {
+
+
+float calculate_number_of_y_for_one_x ( float x1, float y1, float x2, float y2 )
+{
+    float distance_between_x = abs ( x1 - x2 ) ;
+    cout << "Distance between X: " << distance_between_x << endl ;
     
+    int direction_x ;
+    
+    if ( x1 < x2 )
+    {
+        direction_x =  1 ;
+    }
+    
+    if ( x1 > x2 )
+    {
+        direction_x =  -1 ;
+    }
+    
+    if ( x1 == x2 )
+    {
+        direction_x =  0 ;
+    }
+    
+    cout << "Direction X: " << direction_x << endl ;
+    
+    cout << endl ;
+    
+    float distance_between_y = abs ( y1 - y2 ) ;
+    cout << "Distance between Y: " << distance_between_y << endl ;
+    
+    int direction_y ;
+    
+    if ( y1 < y2 )
+    {
+        direction_y =  1 ;
+    }
+    
+    if ( y1 > y2 )
+    {
+        direction_y =  -1 ;
+    }
+    
+    if ( y1 == y2 )
+    {
+        direction_y =  0 ;
+    }
+    
+    cout << "Direction Y: " << direction_y << endl ;
+    
+    cout << endl ;
+    
+    float number_of_y_for_one_x = distance_between_y / distance_between_x ;
+    
+    cout << "Number of Y for one X: " << number_of_y_for_one_x << endl ;
+    
+    cout << endl ;
+    
+    
+    float angle ;
+    
+    // Case where angle is between 0 and 0.25 (between 0° and 45°)
+    if ( direction_x == 1 && direction_y == -1 && number_of_y_for_one_x < 1 )
+    {
+        angle = number_of_y_for_one_x / 4 ;
+    }
+    
+    // Case where angle is between 0.25 and 0.5 (between 45° and 90°)
+    if ( direction_x == 1 && direction_y == -1 && number_of_y_for_one_x > 1 )
+    {
+        // Angle goes from 1 to 0
+        angle = 1 / number_of_y_for_one_x ;
+        
+        // Then inverse growth of angle
+        angle *= -1 ;
+        
+        // Tighten the interval from -1 to 0 to -0.25 to 0
+        angle /= 4 ;
+        
+        // And make it be between 0.25 and 0.5
+        angle += 0.5 ;
+    }
+    
+    
+    
+    // Case where angle is between 0 and 0.25 (between 0° and 45°)
+    if ( direction_x == 1 && direction_y == -1 && number_of_y_for_one_x < 1 )
+    {
+        angle = number_of_y_for_one_x / 4 ;
+    }
+    
+    // Case where angle is between 0 and 0.25 (between 0° and 45°)
+    if ( direction_x == 1 && direction_y == -1 && number_of_y_for_one_x < 1 )
+    {
+        angle = number_of_y_for_one_x / 4 ;
+    }
+    
+    
+    // Case where angle is between 0 and 0.25 (between 0° and 45°)
+    if ( direction_x == 1 && direction_y == -1 && number_of_y_for_one_x < 1 )
+    {
+        angle = number_of_y_for_one_x / 4 ;
+    }
+    
+    // Case where angle is between 0 and 0.25 (between 0° and 45°)
+    if ( direction_x == 1 && direction_y == -1 && number_of_y_for_one_x < 1 )
+    {
+        angle = number_of_y_for_one_x / 4 ;
+    }
+    
+    
+    // Case where angle is between 0 and 0.25 (between 0° and 45°)
+    if ( direction_x == 1 && direction_y == -1 && number_of_y_for_one_x < 1 )
+    {
+        angle = number_of_y_for_one_x / 4 ;
+    }
+    
+    // Case where angle is between 0 and 0.25 (between 0° and 45°)
+    if ( direction_x == 1 && direction_y == -1 && number_of_y_for_one_x < 1 )
+    {
+        angle = number_of_y_for_one_x / 4 ;
+    }
+    
+    cout << "Angle: " << angle << endl ;
+    cout << endl ;
+    
+    return number_of_y_for_one_x ;
+    
+}
+
+
+
+
+void calculate_angle ( float x1, float y1, float x2, float y2 )
+{    
+    
+    /*
+    cout << "Horizontal ratio:" << endl ;
+    float horizontal_ratio = calculate_number_of_y_for_one_x ( 0, 0, 1, 0 ) ;
+    cout << endl ;
+    
+    cout << "Line ratio: " << endl ;
+    float line_ratio = calculate_number_of_y_for_one_x ( x1, y1, x2, y2 ) ;
+    cout << endl ;
+    
+    
+    cout << "Horizontal ratio: " << horizontal_ratio << endl ;
+    cout << "Line ratio: " << line_ratio << endl << endl ;
+     */
+}
+
+
+
+
+int main(int argc, char** argv)
+{    
+    cout << "Ratio HORIZONTAL LEFT TO RIGHT" << endl << endl ;
+    calculate_number_of_y_for_one_x ( 0, 0, 10, 0 ) ;
+    cout << endl << endl ;
+    
+    cout << "Ratio HORIZONTAL RIGHT TO LEFT" << endl << endl ;
+    calculate_number_of_y_for_one_x ( 25, 0, 5, 0 ) ;
+    cout << endl << endl ;
+    
+    cout << "Ratio VERTICAL TOP TO BOTTOM" << endl << endl ;
+    calculate_number_of_y_for_one_x ( 10, 40, 10, 60 ) ;
+    cout << endl << endl ;
+    
+    cout << "Ratio VERTICAL BOTTOM TO TOP" << endl << endl ;
+    calculate_number_of_y_for_one_x ( 0, 100, 0, 10 ) ;
+    cout << endl << endl ;
+    
+    
+    cout << "Ratio LEFT TO RIGHT - TOP TO BOTTOM" << endl << endl ;
+    calculate_number_of_y_for_one_x ( 67, 333, 89, 1330 ) ;
+    cout << endl << endl ;
+    
+    cout << "Ratio RIGHT TO LEFT - TOP TO BOTTOM" << endl << endl ;
+    calculate_number_of_y_for_one_x ( 23, 65, 4, 104 ) ;
+    cout << endl << endl ;
+    
+    
+    
+    cout << "Ratio LEFT TO RIGHT - BOTTOM TO TOP - SLOW SLOPE" << endl << endl ;
+    cout << calculate_number_of_y_for_one_x ( 54, 54, 542, 10 ) << endl ;
+    cout << endl << endl ;
+    
+    cout << "Ratio LEFT TO RIGHT - BOTTOM TO TOP - FAST SLOPE" << endl << endl ;
+    cout << calculate_number_of_y_for_one_x ( 54, 5400, 542, 10 ) << endl ;
+    cout << endl << endl ;
+    
+    
+    
+    cout << "Ratio RIGHT TO LEFT - BOTTOM TO TOP" << endl << endl ;
+    calculate_number_of_y_for_one_x ( 6456, 100, 45, 10 ) ;
+    cout << endl << endl ;
+    
+    /*
+    cout << "Calculate angle of a line LOWERING FROM LEFT TO RIGHT" << endl << endl ;
+    calculate_angle ( 0, 0, 10, 10 ) ;
+    cout << endl ;
+    
+    cout << "Calculate angle of a HORIZONTAL line" << endl << endl ;
+    calculate_angle ( 0, 10, 10, 10) ;
+    cout << endl ;
+    
+    cout << "Calculate angle of a line UPPING FROM LEFT TO RIGHT" << endl << endl ;
+    calculate_angle ( 30, 200, 100, 10) ;
+    cout << endl ;
+    
+    cout << "Calculate angle of a VERTTICAL line" << endl << endl ;
+    calculate_angle ( 0, 10, 0, 100) ;
+    cout << endl ;
+    */
     must_init ( al_init (), "allegro" ) ;
     must_init ( al_install_keyboard (), "keyboard" ) ;
     
@@ -449,7 +660,7 @@ int main(int argc, char** argv) {
                 player .element_attracting_the_player -> right_boundary_y,
                 al_map_rgb_f ( 1, 1, 1 ), 1 ) ;
         
-        std::pair <float, float> coordinates_of_closest_point = 
+        /*std::pair <float, float> coordinates_of_closest_point = 
                 calculate_distance_between_player_and_attracting_element ( player ) ;
         
         al_draw_line (
@@ -459,7 +670,7 @@ int main(int argc, char** argv) {
                 coordinates_of_closest_point .second,
                 al_map_rgb_f ( 0.2, 1, 1 ), 1
         ) ;
-                
+          */      
         al_flip_display () ;
         
     }

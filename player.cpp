@@ -306,6 +306,7 @@ std::pair <float, float> Player::get_speed ()
 
 std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> speed_x_y )
 {
+    /*
     std::pair <float, float> player_ratios_current = get_player_ratio_depending_on_the_current_attracting_element () ;
     std::pair <float, float> player_ratios_after = calculate_ratios (
         element_attracting_the_player->left_boundary_x,
@@ -313,7 +314,8 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
         x + speed_x_y .first,
         y + speed_x_y .second
     ) ;
-    
+
+     * /    
     /*
     if ( ( speed_x_y .first > 0  &&
             x + speed_x_y .first > element_attracting_the_player -> left_boundary_x )
@@ -330,6 +332,7 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
     {
         speed_x_y .second /= 2 ;
     }*/
+   /* 
     float difference_between_lowest_ratios_current ;
     float difference_between_lowest_ratios_after ;
     
@@ -355,7 +358,7 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
         difference_between_lowest_ratios_after = abs (
                 player_ratios_after .second - element_attracting_the_player -> y_ratio_for_one_x
         ) ;
-    }
+    }*/
     /*
     if ( difference_between_lowest_ratios_after > difference_between_lowest_ratios_current )
     {
@@ -414,43 +417,17 @@ std::pair<float, float> Player::get_player_ratio_depending_on_the_current_attrac
 
 
     
-std::pair <float, float> calculate_ratios ( float x1, float y1, float x2, float y2 )
+float calculate_ratio ( float x_static, float y_static,
+    float x_moving, float y_moving )
 {
-    // First is x_ratio_for_one_y
-    // Second is y_ratio_for_one_x
     
-    std::pair <float, float> ratios ;
+    float moving_part = x_moving + y_moving ;
     
-    float difference_between_x = x2 - x1 ;
-    float difference_between_y = y2 - y1;
+    float static_part = x_static + y_static ;
     
-    if ( difference_between_x == 0 )
-    {
-        ratios .first = 0 ;
-        ratios .second = 1 ;
-    }
+    cout << "Calculating ratio: " << moving_part << " / " << static_part << endl ;
     
-    else if ( difference_between_y == 0 )
-    {
-        ratios .first = 1 ;
-        ratios .second = 0 ;
-    }
+    float ratio = moving_part / static_part ;
     
-    else
-    {
-        ratios .first = difference_between_x / difference_between_y ;
-        ratios .second = difference_between_y / difference_between_x ;
-    }
-    /*
-    if ( x1 > x2 )
-    {
-        ratios .first *= -1 ;
-    }
-    
-    if ( y1 > y2 )
-    {
-        ratios .second *= -1 ;
-    }
-    */
-    return ratios ;
+    return ratio ;
 }
