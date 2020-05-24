@@ -367,53 +367,78 @@ int main(int argc, char** argv)
 
     keyboard_init () ;
     
+    cout << "FLOOR" << endl << endl ;
     float number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 175, 800, 1025, 800 ) ;
     Linear_equation_of_attracting_element linear_equation_of_element = calculate_linear_equation_of_element ( 175, 800, 1025, 800 ) ;
     cout << linear_equation_of_element << endl << endl ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 175, 800, 1025, 800 ) ;
+    cout << linear_equation_of_element << endl << endl ;
     
     
+    cout << "RIGHT WALL" << endl << endl ;
     number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 1100, 725, 1100, 200 ) ;
     linear_equation_of_element = calculate_linear_equation_of_element ( 1100, 725, 1100, 200 ) ;
     cout << linear_equation_of_element << endl << endl ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 1100, 725, 1100, 200 ) ;
+    cout << linear_equation_of_element << endl << endl ;
     
     
+    cout << "RIGHT EDGE" << endl << endl ;
     number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 1025, 800, 1100, 725 ) ;    
     linear_equation_of_element = calculate_linear_equation_of_element ( 1025, 800, 1100, 725 ) ;
     cout << linear_equation_of_element << endl << endl ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 1025, 800, 1100, 725 ) ;
+    cout << linear_equation_of_element << endl << endl ;
     
     
+    cout << "LEFT EDGE" << endl << endl ;
     number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 100, 600, 175, 800 ) ;    
     linear_equation_of_element = calculate_linear_equation_of_element ( 100, 600, 175, 800 ) ;
     cout << linear_equation_of_element << endl << endl ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 100, 600, 175, 800 ) ;
+    cout << linear_equation_of_element << endl << endl ;
     
     
-    
+    cout << "TOP RIGHT CORNER ONE" << endl << endl ;
     number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 1100, 200, 1050, 50 ) ;
     linear_equation_of_element = calculate_linear_equation_of_element ( 1100, 200, 1050, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 1100, 200, 1050, 50 ) ;
+    cout << linear_equation_of_element << endl << endl ;
     
     
-    
+    cout << "TOP RIGHT CORNER TWO" << endl << endl ;
     number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 1050, 50, 900, 0 ) ;    
     linear_equation_of_element = calculate_linear_equation_of_element ( 1050, 50, 900, 0 ) ;
     cout << linear_equation_of_element << endl << endl ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 1050, 50, 900, 0 ) ;
+    cout << linear_equation_of_element << endl << endl ;
     
     
-    
+    cout << "CEILING" << endl << endl ;
     number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 900, 0, 400, 50 ) ;
     linear_equation_of_element = calculate_linear_equation_of_element ( 900, 0, 400, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
-    
-    
-    
-    number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 400, 50, 200, 50 ) ;
-    linear_equation_of_element = calculate_linear_equation_of_element ( 400, 50, 200, 50 ) ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 900, 0, 400, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
+    cout << "LITTLE CEILING" << endl << endl ;
+    number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 400, 50, 200, 50 ) ;
+    linear_equation_of_element = calculate_linear_equation_of_element ( 400, 50, 200, 50 ) ;
+    cout << linear_equation_of_element << endl << endl ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 400, 50, 200, 50 ) ;
+    cout << linear_equation_of_element << endl << endl ;
     
+    
+    cout << "TOP LEFT CORNER" << endl << endl ;
     number_of_y_for_one_x = calculate_number_of_y_for_one_x ( 200, 50, 100, 600 ) ;
-    calculate_value_of_y_when_x_is_zero ( 200, 50, 100, 600, number_of_y_for_one_x ) ;
+    linear_equation_of_element = calculate_linear_equation_of_element ( 200, 50, 100, 600 ) ;
+    cout << linear_equation_of_element << endl << endl ;
+    linear_equation_of_element = calculate_perpendicular_linear_equation ( 200, 50, 100, 600 ) ;
+    cout << linear_equation_of_element << endl << endl ;
+    
+    
     
     Attracting_element floor ( 175, 800, 1025, 800 ) ;
     Attracting_element right_wall ( 1100, 725, 1100, 200 ) ;

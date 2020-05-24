@@ -53,9 +53,10 @@ public:
     std::string equation_string ;
     float number_of_y_for_one_x ;
     float value_of_y_when_x_is_zero ;
+    int direction_x, direction_y ;
     
     Linear_equation_of_attracting_element ( float number_of_y_for_one_x,
-        float value_of_y_when_x_is_zero ) ;
+        float value_of_y_when_x_is_zero, int direction_x, int direction_y ) ;
 } ;
 
 std::ostream& operator<<(std::ostream &strm, const Linear_equation_of_attracting_element &linear_equation ) ;
@@ -70,7 +71,9 @@ Linear_equation_of_attracting_element
 float calculate_value_of_y_when_x_is_zero ( float x1, float y1, float x2, float y2,
     float number_of_y_for_one_x ) ;
 
-
+Linear_equation_of_attracting_element calculate_perpendicular_linear_equation (
+    float x1, float y1, float x2, float y2
+) ;
 
 #endif /* ATTRACTING_ELEMENT_H */
 

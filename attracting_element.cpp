@@ -494,23 +494,83 @@ cout << endl << endl ;
 */
 
 
-Linear_equation_of_attracting_element::Linear_equation_of_attracting_element ( float number_of_y_for_one_x,
-    float value_of_y_when_x_is_zero ) : number_of_y_for_one_x ( number_of_y_for_one_x ),
-    value_of_y_when_x_is_zero ( value_of_y_when_x_is_zero )
+Linear_equation_of_attracting_element::Linear_equation_of_attracting_element (
+    float number_of_y_for_one_x, float value_of_y_when_x_is_zero,
+    int direction_x, int direction_y
+) : number_of_y_for_one_x ( number_of_y_for_one_x ),
+    value_of_y_when_x_is_zero ( value_of_y_when_x_is_zero ),
+    direction_x ( direction_x ), direction_y ( direction_y )
 {
-    if ( number_of_y_for_one_x == 0 )
+    string x_string_representation, y_string_representation ;
+    string message_for_horizontal_and_vertical_lines = "" ;
+    
+    if ( direction_x == 1 || direction_x == 0 )
     {
-        equation_string = "Y =" ;
+        x_string_representation = "+X" ;
+        
+        if ( direction_x == 0 )
+        {
+            if ( direction_y == 1 )
+            {
+                message_for_horizontal_and_vertical_lines = "where there is ( +Y )" ;
+            }
+
+            else if ( direction_y == -1 )
+            {
+                message_for_horizontal_and_vertical_lines = "where there is ( -Y )" ;
+            }
+        }
+    }
+
+    else if ( direction_x == -1 )
+    {
+        x_string_representation = "-X" ;
+    }
+    
+    
+    
+    
+    if ( direction_y == 1 || direction_y == 0 )
+    {
+        y_string_representation = "+Y" ;
+        
+        if ( direction_y == 0 )
+        {
+            if ( direction_x == 1 )
+            {
+                message_for_horizontal_and_vertical_lines = "where there is ( +X )" ;
+            }
+
+            else if ( direction_x == -1 )
+            {
+                message_for_horizontal_and_vertical_lines = "where there is ( -X )" ;
+            }
+        }
+    }
+
+    else if ( direction_y == -1 )
+    {
+        y_string_representation = "-Y" ;
+    }
+    
+    
+    
+    
+    if ( number_of_y_for_one_x == 0 )
+    {        
+        equation_string = y_string_representation + " =" ;
     }
     
     else if ( std::isinf ( number_of_y_for_one_x ) )
     {
-        equation_string = "X =" ;
+        equation_string = x_string_representation + " =" ;
     }
 
     else
     {
-        equation_string = "Y = " + std::to_string ( number_of_y_for_one_x ) + " * X" ;
+        equation_string = y_string_representation + " = " ;
+        equation_string += std::to_string ( number_of_y_for_one_x ) + " * " ;
+        equation_string += "( " + x_string_representation + " )" ;
     }
 
     string string_value_of_y_when_x_is_zero = std::to_string ( value_of_y_when_x_is_zero ) ;
@@ -518,6 +578,11 @@ Linear_equation_of_attracting_element::Linear_equation_of_attracting_element ( f
     equation_string += value_of_y_when_x_is_zero >= 0
         ? " + " + string_value_of_y_when_x_is_zero
         : " - " + string_value_of_y_when_x_is_zero .substr ( 1, string_value_of_y_when_x_is_zero .length () - 1 ) ;
+    
+    if ( direction_x == 0 || direction_y == 0 )
+    {
+        equation_string += " " + message_for_horizontal_and_vertical_lines ;
+    }
 }
 
 
@@ -540,6 +605,39 @@ Linear_equation_of_attracting_element calculate_linear_equation_of_element ( flo
     cout << "Y1: " << y1 << endl ;
     cout << "X2: " << x2 << endl ;
     cout << "Y2: " << y2 << endl ;
+ 
+    int direction_x, direction_y ;
+    
+    if ( x1 < x2 )
+    {
+        direction_x = 1 ;
+    }
+    
+    else if ( x1 > x2 )
+    {
+        direction_x = -1 ;
+    }
+    
+    else if ( x1 == x2 )
+    {
+        direction_x = 0 ;
+    }
+    
+    
+    if ( y1 < y2 )
+    {
+        direction_y = 1 ;
+    }
+    
+    else if ( y1 > y2 )
+    {
+        direction_y = -1 ;
+    }
+    
+    else if ( y1 == y2 )
+    {
+        direction_y = 0 ;
+    }
     
     // In the form y = ax + b where a is "number_of_y_for_one_x" and b is "value_of_y_when_x_is_zero"
     float number_of_y_for_one_x = calculate_number_of_y_for_one_x ( x1, y1, x2, y2 ) ;
@@ -549,7 +647,7 @@ Linear_equation_of_attracting_element calculate_linear_equation_of_element ( flo
     ) ;
     
     Linear_equation_of_attracting_element linear_equation = Linear_equation_of_attracting_element (
-        number_of_y_for_one_x, value_of_y_when_x_is_zero
+        number_of_y_for_one_x, value_of_y_when_x_is_zero, direction_x, direction_y
     ) ;
     
     return linear_equation ;
@@ -570,8 +668,113 @@ float calculate_value_of_y_when_x_is_zero ( float x1, float y1, float x2, float 
     
     else
     {
-        value_of_y_when_x_is_zero = y1 - ( number_of_y_for_one_x * x1 ) ;
+        // Directions of X and Y go in the same way (1 and 1, or -1 and -1)
+        // Or if direction of Y is 0
+        if ( ( x1 - x2 ) > 0 && ( y1 - y2 ) > 0
+            || ( x1 - x2 ) < 0 && ( y1 - y2 ) < 0
+            || abs ( y1 - y2 ) == 0 )
+        {
+            value_of_y_when_x_is_zero = y1 - ( number_of_y_for_one_x * x1 ) ;
+        }
+        
+        // Directions of X and Y go in opposite ways (-1 and 1, or 1 and -1)
+        else if ( ( x1 - x2 ) < 0 && ( y1 - y2 ) > 0
+            || ( x1 - x2 ) > 0 && ( y1 - y2 ) < 0 )
+        {
+            value_of_y_when_x_is_zero = y1 + ( number_of_y_for_one_x * x1 ) ;
+        }
     }
     
     return value_of_y_when_x_is_zero ;
+}
+
+
+Linear_equation_of_attracting_element calculate_perpendicular_linear_equation (
+    float x1, float y1, float x2, float y2
+)
+{
+    Linear_equation_of_attracting_element linear_equation_of_element
+        = calculate_linear_equation_of_element ( x1, y1, x2, y2 ) ;
+    
+    
+    int perpendicular_direction_x, perpendicular_direction_y ;
+    
+    if ( linear_equation_of_element .direction_x == 1 )
+    {
+        if ( linear_equation_of_element .direction_y == 1 )
+        {
+            perpendicular_direction_x = 1 ;
+            perpendicular_direction_y = -1 ;
+        }
+        
+        else if ( linear_equation_of_element .direction_y == -1 )
+        {
+            perpendicular_direction_x = -1 ;
+            perpendicular_direction_y = -1 ;
+        }
+        
+        else if ( linear_equation_of_element .direction_y == 0 )
+        {
+            perpendicular_direction_x = 0 ;
+            perpendicular_direction_y = -1 ;
+        }
+    }
+    
+    else if ( linear_equation_of_element .direction_x == -1 )
+    {
+        if ( linear_equation_of_element .direction_y == 1 )
+        {
+            perpendicular_direction_x = 1 ;
+            perpendicular_direction_y = 1 ;
+        }
+        
+        else if ( linear_equation_of_element .direction_y == -1 )
+        {
+            perpendicular_direction_x = -1 ;
+            perpendicular_direction_y = 1 ;
+        }
+        
+        else if ( linear_equation_of_element .direction_y == 0 )
+        {
+            perpendicular_direction_x = 0 ;
+            perpendicular_direction_y = 1 ;
+        }
+    }
+    
+    else if ( linear_equation_of_element .direction_x == 0 )
+    {
+        if ( linear_equation_of_element .direction_y == 1 )
+        {
+            perpendicular_direction_x = 1 ;
+            perpendicular_direction_y = 0 ;
+        }
+        
+        else if ( linear_equation_of_element .direction_y == -1 )
+        {
+            perpendicular_direction_x = -1 ;
+            perpendicular_direction_y = 0 ;
+        }
+    }
+    
+    float perpendicular_number_of_y_for_one_x
+        = ( 1 / linear_equation_of_element .number_of_y_for_one_x ) ;
+    
+    
+    float perpendicular_value_of_y_when_x_is_zero =
+        calculate_value_of_y_when_x_is_zero (
+            x1, y1,
+            x1 + ( perpendicular_direction_x * ( 1 / perpendicular_number_of_y_for_one_x ) ),
+            y1 + ( perpendicular_direction_y * perpendicular_number_of_y_for_one_x ),
+            perpendicular_number_of_y_for_one_x
+        ) ;
+    
+    Linear_equation_of_attracting_element perpendicular_linear_equation
+        = Linear_equation_of_attracting_element (
+            perpendicular_number_of_y_for_one_x,
+            perpendicular_value_of_y_when_x_is_zero,
+            perpendicular_direction_x,
+            perpendicular_direction_y
+        ) ;
+    
+    return perpendicular_linear_equation ;
 }
