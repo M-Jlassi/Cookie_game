@@ -494,7 +494,7 @@ cout << endl << endl ;
 */
 
 
-Linear_equation_of_attracting_element::Linear_equation_of_attracting_element (
+Linear_equation::Linear_equation (
     float number_of_y_for_one_x, float value_of_y_when_x_is_zero,
     int direction_x, int direction_y
 ) : number_of_y_for_one_x ( number_of_y_for_one_x ),
@@ -588,7 +588,7 @@ Linear_equation_of_attracting_element::Linear_equation_of_attracting_element (
 
 
 
-std::ostream& operator<<( std::ostream &strm, const Linear_equation_of_attracting_element &linear_equation )
+std::ostream& operator<<( std::ostream &strm, const Linear_equation &linear_equation )
 {
     string description_of_element = "Linear_equation: " ;
     description_of_element += linear_equation .equation_string ;
@@ -598,7 +598,7 @@ std::ostream& operator<<( std::ostream &strm, const Linear_equation_of_attractin
 
 
 
-Linear_equation_of_attracting_element calculate_linear_equation_of_element ( float x1, float y1, float x2, float y2 )
+Linear_equation calculate_linear_equation_of_element ( float x1, float y1, float x2, float y2 )
 {
     cout << "Points" << endl << endl ;
     cout << "X1: " << x1 << endl ;
@@ -646,7 +646,7 @@ Linear_equation_of_attracting_element calculate_linear_equation_of_element ( flo
         x1, y1, x2, y2, number_of_y_for_one_x
     ) ;
     
-    Linear_equation_of_attracting_element linear_equation = Linear_equation_of_attracting_element (
+    Linear_equation linear_equation = Linear_equation (
         number_of_y_for_one_x, value_of_y_when_x_is_zero, direction_x, direction_y
     ) ;
     
@@ -689,11 +689,11 @@ float calculate_value_of_y_when_x_is_zero ( float x1, float y1, float x2, float 
 }
 
 
-Linear_equation_of_attracting_element calculate_perpendicular_linear_equation (
+Linear_equation calculate_perpendicular_linear_equation (
     float x1, float y1, float x2, float y2
 )
 {
-    Linear_equation_of_attracting_element linear_equation_of_element
+    Linear_equation linear_equation_of_element
         = calculate_linear_equation_of_element ( x1, y1, x2, y2 ) ;
     
     
@@ -768,8 +768,8 @@ Linear_equation_of_attracting_element calculate_perpendicular_linear_equation (
             perpendicular_number_of_y_for_one_x
         ) ;
     
-    Linear_equation_of_attracting_element perpendicular_linear_equation
-        = Linear_equation_of_attracting_element (
+    Linear_equation perpendicular_linear_equation
+        = Linear_equation (
             perpendicular_number_of_y_for_one_x,
             perpendicular_value_of_y_when_x_is_zero,
             perpendicular_direction_x,
@@ -777,4 +777,113 @@ Linear_equation_of_attracting_element calculate_perpendicular_linear_equation (
         ) ;
     
     return perpendicular_linear_equation ;
+}
+
+
+
+bool Linear_equation::point_is_to_the_left_of_the_linear_equation ( float x, float y )
+{    
+    if ( direction_x != 0 && direction_y != 0 )
+    {
+        // Calculate the hypothetic value of Y with the linear equation
+    
+        float value_of_y_if_x_is_on_the_line ;
+    
+        // If X and Y have the same direction, the slope of the line goes downwards
+        // The Y we want to calculate will increase when X increases
+        
+        if ( direction_x == direction_y )
+        {
+            value_of_y_if_x_is_on_the_line =
+                ( number_of_y_for_one_x * x )
+                + value_of_y_when_x_is_zero ;
+        }
+        
+        // If X and Y have opposite directions, the slope of the line goes upwards
+        // The Y we want to calculate will decrease when X increases
+        
+        else if ( direction_x == ( -1 ) * direction_y )
+        {
+            value_of_y_if_x_is_on_the_line =
+                ( number_of_y_for_one_x * ( -1 ) * x )
+                + value_of_y_when_x_is_zero ;
+        }
+
+        
+        // Verify if the real point is to the left of the line
+        
+        // If the line goes from left to right, the hypothetic point should be beneath the real point
+        
+        if ( direction_x == 1 )
+        {
+            if ( value_of_y_if_x_is_on_the_line > y )
+            {
+                return true ;
+            }
+        }
+        
+        // If the line goes from right to left, the hypothetic point should be above the real point
+        
+        else if ( direction_x == -1 )
+        {
+            if ( value_of_y_if_x_is_on_the_line < y )
+            {
+                return true ;
+            }
+        }
+    }
+    
+    
+    
+    else if ( direction_x == 0 )
+    {
+        // Vertical from top to bottom
+        
+        if ( direction_y == 1 )
+        {
+            if ( x > value_of_y_when_x_is_zero )
+            {
+                return true ;
+            }
+        }
+        
+        // Vertical from bottom to top
+        
+        if ( direction_y == -1 )
+        {
+            if ( x < value_of_y_when_x_is_zero )
+            {
+                return true ;
+            }
+        }
+    }
+    
+    
+    
+    else if ( direction_y == 0 )
+    {
+        // Horizontal from left to right
+        
+        if ( direction_x == 1 )
+        {
+            if ( y < value_of_y_when_x_is_zero )
+            {
+                return true ;
+            }
+        }
+        
+        // Horizontal from right to left
+        
+        if ( direction_x == -1 )
+        {
+            if ( y > value_of_y_when_x_is_zero )
+            {
+                return true ;
+            }
+        }
+    }
+    
+    
+    
+    return false ;
 }

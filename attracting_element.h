@@ -46,7 +46,7 @@ public:
 
 std::ostream& operator<<(std::ostream &strm, const Attracting_element &element) ;
 
-class Linear_equation_of_attracting_element
+class Linear_equation
 {
 public:
     
@@ -55,23 +55,25 @@ public:
     float value_of_y_when_x_is_zero ;
     int direction_x, direction_y ;
     
-    Linear_equation_of_attracting_element ( float number_of_y_for_one_x,
+    Linear_equation ( float number_of_y_for_one_x,
         float value_of_y_when_x_is_zero, int direction_x, int direction_y ) ;
+    
+    bool point_is_to_the_left_of_the_linear_equation ( float x, float y ) ;
 } ;
 
-std::ostream& operator<<(std::ostream &strm, const Linear_equation_of_attracting_element &linear_equation ) ;
+std::ostream& operator<<(std::ostream &strm, const Linear_equation &linear_equation ) ;
 
 float calculate_number_of_y_for_one_x ( float x1, float y1, float x2, float y2 ) ;
 
 float calculate_angle ( float x1, float y1, float x2, float y2 ) ;
 
-Linear_equation_of_attracting_element
+Linear_equation
     calculate_linear_equation_of_element ( float x1, float y1, float x2, float y2 ) ;
 
 float calculate_value_of_y_when_x_is_zero ( float x1, float y1, float x2, float y2,
     float number_of_y_for_one_x ) ;
 
-Linear_equation_of_attracting_element calculate_perpendicular_linear_equation (
+Linear_equation calculate_perpendicular_linear_equation (
     float x1, float y1, float x2, float y2
 ) ;
 
