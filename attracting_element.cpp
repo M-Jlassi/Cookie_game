@@ -781,33 +781,11 @@ Linear_equation calculate_perpendicular_linear_equation (
 
 
 
-bool Linear_equation::point_is_to_the_left_of_the_linear_equation ( float x, float y )
+bool Linear_equation::point_is_to_the_left_of_the_line ( float x, float y )
 {    
     if ( direction_x != 0 && direction_y != 0 )
     {
-        // Calculate the hypothetic value of Y with the linear equation
-    
-        float value_of_y_if_x_is_on_the_line ;
-    
-        // If X and Y have the same direction, the slope of the line goes downwards
-        // The Y we want to calculate will increase when X increases
-        
-        if ( direction_x == direction_y )
-        {
-            value_of_y_if_x_is_on_the_line =
-                ( number_of_y_for_one_x * x )
-                + value_of_y_when_x_is_zero ;
-        }
-        
-        // If X and Y have opposite directions, the slope of the line goes upwards
-        // The Y we want to calculate will decrease when X increases
-        
-        else if ( direction_x == ( -1 ) * direction_y )
-        {
-            value_of_y_if_x_is_on_the_line =
-                ( number_of_y_for_one_x * ( -1 ) * x )
-                + value_of_y_when_x_is_zero ;
-        }
+        float value_of_y_if_x_is_on_the_line = calculate_value_of_y_if_x_is_on_the_line ( x ) ;
 
         
         // Verify if the real point is to the left of the line
@@ -883,6 +861,76 @@ bool Linear_equation::point_is_to_the_left_of_the_linear_equation ( float x, flo
         }
     }
     
+    
+    
+    return false ;
+}
+
+
+
+float Linear_equation::calculate_value_of_y_if_x_is_on_the_line ( float x )
+{
+    // Calculate the hypothetic value of Y with the linear equation
+    
+    float value_of_y_if_x_is_on_the_line ;
+
+    // If X and Y have the same direction, the slope of the line goes downwards
+    // The Y we want to calculate will increase when X increases
+
+    if ( direction_x == direction_y )
+    {
+        value_of_y_if_x_is_on_the_line =
+            ( number_of_y_for_one_x * x )
+            + value_of_y_when_x_is_zero ;
+    }
+
+    // If X and Y have opposite directions, the slope of the line goes upwards
+    // The Y we want to calculate will decrease when X increases
+
+    else if ( direction_x == ( -1 ) * direction_y )
+    {
+        value_of_y_if_x_is_on_the_line =
+            ( number_of_y_for_one_x * ( -1 ) * x )
+            + value_of_y_when_x_is_zero ;
+    }
+    
+    
+    return value_of_y_if_x_is_on_the_line ;
+}
+
+
+
+bool Linear_equation::point_is_on_the_line ( float x, float y )
+{
+    if ( direction_x != 0 && direction_y != 0 )
+    {
+        float value_of_y_if_x_is_on_the_line = calculate_value_of_y_if_x_is_on_the_line ( x ) ;
+
+        if ( value_of_y_if_x_is_on_the_line == y )
+        {
+            return true ;
+        }
+    }
+    
+    // Vertical line: X is constant
+    
+    else if ( direction_x == 0 )
+    {
+        if ( value_of_y_when_x_is_zero == x )
+        {
+            return true ;
+        }
+    }
+    
+    // Horizontal line: Y is constant
+    
+    else if ( direction_y == 0 )
+    {
+        if ( value_of_y_when_x_is_zero == y )
+        {
+            return true ;
+        }
+    }
     
     
     return false ;

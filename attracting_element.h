@@ -58,7 +58,11 @@ public:
     Linear_equation ( float number_of_y_for_one_x,
         float value_of_y_when_x_is_zero, int direction_x, int direction_y ) ;
     
-    bool point_is_to_the_left_of_the_linear_equation ( float x, float y ) ;
+    bool point_is_to_the_left_of_the_line ( float x, float y ) ;
+    
+    bool point_is_on_the_line ( float x, float y ) ;
+    
+    float calculate_value_of_y_if_x_is_on_the_line ( float x ) ;
 } ;
 
 std::ostream& operator<<(std::ostream &strm, const Linear_equation &linear_equation ) ;

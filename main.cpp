@@ -90,11 +90,73 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     test_coordinates_from_player_position .first = player .x ;
     test_coordinates_from_player_position .second = player .y ;
     
+    Linear_equation linear_equation_of_the_attracting_element =
+        calculate_linear_equation_of_element (
+            player .element_attracting_the_player -> left_boundary_x,
+            player .element_attracting_the_player -> left_boundary_y,
+            player .element_attracting_the_player -> right_boundary_x,
+            player .element_attracting_the_player -> right_boundary_y
+        ) ;
+    
+    // Verify if the player touches the element
+    
+    if ( linear_equation_of_the_attracting_element .point_is_on_the_line (
+        test_coordinates_from_player_position .first, test_coordinates_from_player_position .second
+    ) )
+    {
+        return test_coordinates_from_player_position ;
+    }
+    
+    /*
+     * Verify if the player is above the element
+     * 
+     * If so, locate whether the player is:
+     *  Directly above: the closest way to the element will be the perpendicular to this element
+     *  To the left: the closest way to the element will be in the direction of the left boundary
+     *  To the right: the closest way to the element will be in the direction of the right boundary
+     * 
+     */
+    
+    
+    if ( linear_equation_of_the_attracting_element .point_is_to_the_left_of_the_line (
+        test_coordinates_from_player_position .first, test_coordinates_from_player_position .second
+    ) )
+    {
+        Linear_equation left_boundary_perpendicular_to_the_attracting_element =
+            calculate_perpendicular_linear_equation (
+                player .element_attracting_the_player -> left_boundary_x,
+                player .element_attracting_the_player -> left_boundary_y,
+                player .element_attracting_the_player -> right_boundary_x,
+                player .element_attracting_the_player -> right_boundary_y
+            ) ;
+        
+        if ( left_boundary_perpendicular_to_the_attracting_element .point_is_on_the_line (
+            test_coordinates_from_player_position .first, test_coordinates_from_player_position .second
+        ) )
+        {
+            // Reverse perpendicular until get to the element
+        }
+        
+        else if ( left_boundary_perpendicular_to_the_attracting_element
+            .point_is_to_the_left_of_the_line (
+                test_coordinates_from_player_position .first, test_coordinates_from_player_position .second
+            )
+        )
+        {
+            // Linear_equation from the player to the left boundary position of the element
+        }
+        
+        
+    }
+    
     // Must check if y = ( number_of_y_for_one_x ) * x + ( left_boundary_y ) ;
     
     // Check if the player is above the element
-    bool player_is_above_the_element = false ;
+    //bool player_is_above_the_element = false ;
     
+    
+    
+    /*
     // If the element goes from left to right, then the player Y must be above the element
     if ( player .element_attracting_the_player -> x_direction == 1
         && player .y < player .element_attracting_the_player -> left_boundary_y )
@@ -112,7 +174,7 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
         {
             player_is_above_the_element = true ;
         }
-        
+     
         
     }
     
@@ -147,7 +209,7 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     
     cout << "Object angle" << endl ;
     cout << player .element_attracting_the_player -> angle << endl << endl ;
-    
+    */
     float direction_to_follow_x ;
     float direction_to_follow_y ;
     
@@ -250,7 +312,7 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     //{
         //cout << "Player Y ratio for one X: " << player_ratios .second << endl ;
         //cout << "Element Y ratio for one X: " << element_attracting_the_player -> y_ratio_for_one_x << endl ;
-    
+    /*
     float element_angle = calculate_angle (
         player .element_attracting_the_player -> left_boundary_x,
         player .element_attracting_the_player -> left_boundary_y,
@@ -315,7 +377,7 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
 
     coordinates_of_closest_point .first = test_coordinates_from_player_position .first ;
     coordinates_of_closest_point .second = test_coordinates_from_player_position .second ;
-    
+    */
     return coordinates_of_closest_point ;
 }
 
@@ -372,10 +434,12 @@ int main(int argc, char** argv)
     Linear_equation linear_equation_of_element = calculate_linear_equation_of_element ( 175, 800, 1025, 800 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
-    float x = 1200 ;
-    float y = 900 ;
+    float x = 2000 ;
+    float y = 2900 ;
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+    
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 175, 800, 1025, 800 ) ;
     cout << linear_equation_of_element << endl << endl ;
@@ -389,7 +453,9 @@ int main(int argc, char** argv)
     cout << linear_equation_of_element << endl << endl ;
     
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+    
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 1100, 725, 1100, 200 ) ;
     cout << linear_equation_of_element << endl << endl ;
@@ -401,7 +467,9 @@ int main(int argc, char** argv)
     cout << linear_equation_of_element << endl << endl ;
     
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 1025, 800, 1100, 725 ) ;
     cout << linear_equation_of_element << endl << endl ;
@@ -415,7 +483,9 @@ int main(int argc, char** argv)
     cout << linear_equation_of_element << endl << endl ;
     
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 100, 600, 175, 800 ) ;
     cout << linear_equation_of_element << endl << endl ;
@@ -427,7 +497,9 @@ int main(int argc, char** argv)
     cout << linear_equation_of_element << endl << endl ;
     
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+    
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 1100, 200, 1050, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
@@ -439,7 +511,9 @@ int main(int argc, char** argv)
     cout << linear_equation_of_element << endl << endl ;
     
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+    
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 1050, 50, 900, 0 ) ;
     cout << linear_equation_of_element << endl << endl ;
@@ -451,7 +525,9 @@ int main(int argc, char** argv)
     cout << linear_equation_of_element << endl << endl ;
     
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+    
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 900, 0, 400, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
@@ -463,7 +539,9 @@ int main(int argc, char** argv)
     cout << linear_equation_of_element << endl << endl ;
     
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+    
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 400, 50, 200, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
@@ -475,7 +553,9 @@ int main(int argc, char** argv)
     cout << linear_equation_of_element << endl << endl ;
     
     cout << "Point: " << "X = " << x << " ; Y = " << y << endl ;
-    cout << linear_equation_of_element .point_is_to_the_left_of_the_linear_equation ( x, y ) << endl << endl ;
+    cout << linear_equation_of_element .point_is_to_the_left_of_the_line ( x, y ) << endl << endl ;
+    
+    cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
     linear_equation_of_element = calculate_perpendicular_linear_equation ( 200, 50, 100, 600 ) ;
     cout << linear_equation_of_element << endl << endl ;
