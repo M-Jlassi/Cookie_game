@@ -494,6 +494,14 @@ cout << endl << endl ;
 */
 
 
+Linear_equation::Linear_equation () : number_of_y_for_one_x ( 0 ),
+    value_of_y_when_x_is_zero ( 0 ), direction_x ( 1 ), direction_y ( 0 )
+{
+    equation_string = Linear_equation ( number_of_y_for_one_x,
+        value_of_y_when_x_is_zero, direction_x, direction_y ) .equation_string ;
+}
+
+
 Linear_equation::Linear_equation (
     float number_of_y_for_one_x, float value_of_y_when_x_is_zero,
     int direction_x, int direction_y
@@ -585,6 +593,22 @@ Linear_equation::Linear_equation (
     }
 }
 
+/*
+Linear_equation Linear_equation ( float x, float y, float number_of_y_for_one_x,
+    int direction_x, int direction_y ) :
+    number_of_y_for_one_x ( number_of_y_for_one_x ), direction_x ( direction_x ),
+    direction_y ( direction_y )
+{}*/
+
+
+Linear_equation calculate_linear_equation_with_one_coordinate ( float x1, float y1,
+    int direction_x, int direction_y, float number_of_y_for_one_x )
+{
+    float x2 = x1 + ( direction_x * 1 ) ;
+    float y2 = y1 + ( direction_y * number_of_y_for_one_x ) ;
+    
+    return calculate_linear_equation_of_element ( x1, y1, x2, y2 ) ;
+}
 
 
 
@@ -600,12 +624,14 @@ std::ostream& operator<<( std::ostream &strm, const Linear_equation &linear_equa
 
 Linear_equation calculate_linear_equation_of_element ( float x1, float y1, float x2, float y2 )
 {
+    /*
     cout << "Points" << endl << endl ;
     cout << "X1: " << x1 << endl ;
     cout << "Y1: " << y1 << endl ;
     cout << "X2: " << x2 << endl ;
     cout << "Y2: " << y2 << endl ;
- 
+    */
+    
     int direction_x, direction_y ;
     
     if ( x1 < x2 )
@@ -856,13 +882,14 @@ bool Linear_equation::point_is_to_the_left_of_the_line ( float x, float y )
         {
             if ( y > value_of_y_when_x_is_zero )
             {
+                cout << "To the left" << endl ;
                 return true ;
             }
         }
     }
     
     
-    
+    cout << "To the right" << endl ;
     return false ;
 }
 
@@ -934,4 +961,15 @@ bool Linear_equation::point_is_on_the_line ( float x, float y )
     
     
     return false ;
+}
+
+
+
+Linear_equation Linear_equation::calculate_line_going_in_the_opposite_direction ()
+{
+    int opposite_line_direction_x = ( -1 ) * direction_x ;
+    int opposite_line_direction_y = ( -1 ) * direction_y ;
+    
+    return Linear_equation ( number_of_y_for_one_x, value_of_y_when_x_is_zero,
+        opposite_line_direction_x, opposite_line_direction_y ) ;
 }

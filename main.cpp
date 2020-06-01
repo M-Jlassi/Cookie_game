@@ -98,10 +98,13 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
             player .element_attracting_the_player -> right_boundary_y
         ) ;
     
+    cout << "Linear equation of the attracting element" << endl ;
+    cout << linear_equation_of_the_attracting_element << endl << endl ;
+    
     // Verify if the player touches the element
     
     if ( linear_equation_of_the_attracting_element .point_is_on_the_line (
-        test_coordinates_from_player_position .first, test_coordinates_from_player_position .second
+        player .x, player .y
     ) )
     {
         return test_coordinates_from_player_position ;
@@ -117,11 +120,16 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
      * 
      */
     
+    Linear_equation line_going_to_the_element ;
+            
+    // Player is above the element?
     
     if ( linear_equation_of_the_attracting_element .point_is_to_the_left_of_the_line (
-        test_coordinates_from_player_position .first, test_coordinates_from_player_position .second
+        player .x, player .y
     ) )
     {
+        cout << "Above the line" << endl << endl ;
+        
         Linear_equation left_boundary_perpendicular_to_the_attracting_element =
             calculate_perpendicular_linear_equation (
                 player .element_attracting_the_player -> left_boundary_x,
@@ -130,254 +138,137 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
                 player .element_attracting_the_player -> right_boundary_y
             ) ;
         
+        cout << "Left boundary perpendicular" << endl ;
+        cout << left_boundary_perpendicular_to_the_attracting_element << endl << endl ;
+        
         if ( left_boundary_perpendicular_to_the_attracting_element .point_is_on_the_line (
-            test_coordinates_from_player_position .first, test_coordinates_from_player_position .second
+            player .x, player .y
         ) )
         {
+            cout << "Left" << endl << endl ;
             // Reverse perpendicular until get to the element
+            
+            line_going_to_the_element =
+                left_boundary_perpendicular_to_the_attracting_element 
+                .calculate_line_going_in_the_opposite_direction () ;
         }
         
         else if ( left_boundary_perpendicular_to_the_attracting_element
             .point_is_to_the_left_of_the_line (
-                test_coordinates_from_player_position .first, test_coordinates_from_player_position .second
+                player .x, player .y
             )
         )
         {
+            cout << "Left left" << endl << endl ;
             // Linear_equation from the player to the left boundary position of the element
+            
+            line_going_to_the_element = calculate_linear_equation_of_element (
+                player .x, player .y,
+                player .element_attracting_the_player -> left_boundary_x,
+                player .element_attracting_the_player -> left_boundary_y
+            ) ;
         }
         
+        // Player is to the right of the left perpendicular
         
-    }
-    
-    // Must check if y = ( number_of_y_for_one_x ) * x + ( left_boundary_y ) ;
-    
-    // Check if the player is above the element
-    //bool player_is_above_the_element = false ;
-    
-    
-    
-    /*
-    // If the element goes from left to right, then the player Y must be above the element
-    if ( player .element_attracting_the_player -> x_direction == 1
-        && player .y < player .element_attracting_the_player -> left_boundary_y )
-    {
-        // If the element goes from top to bottom, then the player X must be to the right of the element
-        if ( player .element_attracting_the_player -> y_direction == 1
-            && player .x > player .element_attracting_the_player -> left_boundary_x )
+        else
         {
-            player_is_above_the_element = true ;
+            float x_right_boundary_if_line_continues =
+                player .element_attracting_the_player -> right_boundary_x
+                + ( linear_equation_of_the_attracting_element .direction_x * 1 ) ;
+            
+            float y_right_boundary_if_line_continues =
+                player .element_attracting_the_player -> right_boundary_y
+                + ( linear_equation_of_the_attracting_element .direction_y
+                * linear_equation_of_the_attracting_element .number_of_y_for_one_x ) ;
+            
+            Linear_equation right_boundary_perpendicular_to_the_attracting_element =
+                calculate_perpendicular_linear_equation (
+                    player .element_attracting_the_player -> right_boundary_x,
+                    player .element_attracting_the_player -> right_boundary_y,
+                    x_right_boundary_if_line_continues,
+                    y_right_boundary_if_line_continues
+                ) ;
+            
+            cout << "Right boundary perpendicular" << endl ;
+            cout << right_boundary_perpendicular_to_the_attracting_element << endl << endl ;
+            
+            Linear_equation line_going_in_the_opposite_direction =
+                right_boundary_perpendicular_to_the_attracting_element
+                .calculate_line_going_in_the_opposite_direction () ;
+            
+            // The player is just above the element
+            
+            if ( right_boundary_perpendicular_to_the_attracting_element
+                .point_is_to_the_left_of_the_line ( player .x, player .y ) )
+            {
+                cout << "Middle" << endl << endl ;
+                
+                line_going_to_the_element =
+                    calculate_linear_equation_with_one_coordinate (
+                        player .x, player .y,
+                        line_going_in_the_opposite_direction .direction_x,
+                        line_going_in_the_opposite_direction .direction_y,
+                        line_going_in_the_opposite_direction .number_of_y_for_one_x
+                    ) ;
+            }
+            
+            // The player is on the right boundary perpendicular
+            
+            else if ( right_boundary_perpendicular_to_the_attracting_element
+                .point_is_on_the_line ( player .x, player .y ) )
+            {
+                cout << "Right" << endl << endl ;
+                
+                line_going_to_the_element = line_going_in_the_opposite_direction ;
+            }
+            
+            // The player is to the right of the element
+            
+            else
+            {
+                cout << "Right right" << endl << endl ;
+
+                line_going_to_the_element = calculate_linear_equation_of_element (
+                    player .x, player .y,
+                    player .element_attracting_the_player -> right_boundary_x,
+                    player .element_attracting_the_player -> right_boundary_y
+                ) ;
+            }
         }
-        
-        // If the element goes from bottom to top, then the player X must be to the left of the element
-        else if ( player .element_attracting_the_player -> y_direction == -1
-            && player .x < player .element_attracting_the_player -> left_boundary_y )
-        {
-            player_is_above_the_element = true ;
-        }
-     
-        
-    }
-    
-    // If the element goes from right to left, then the player Y must be underneath the element
-    else if (  player .element_attracting_the_player -> x_direction == -1
-        && player .y > player .element_attracting_the_player -> left_boundary_y )
-    {
-        // If the element goes from top to bottom, then the player X must be to the right of the element
-        if ( player .element_attracting_the_player -> y_direction == 1
-            && player .x > player .element_attracting_the_player -> left_boundary_x )
-        {
-            player_is_above_the_element = true ;
-        }
-        
-        // If the element goes from bottom to top, then the player X must be to the left of the element
-        else if ( player .element_attracting_the_player -> y_direction == -1
-            && player .x < player .element_attracting_the_player -> left_boundary_y )
-        {
-            player_is_above_the_element = true ;
-        }
-    }
-    
-    float current_test_angle = calculate_angle (
-            player .element_attracting_the_player -> left_boundary_x,
-            player .element_attracting_the_player -> left_boundary_y,
-            player .x,
-            player .y
-    ) ;
-    
-    cout << "Player angle" << endl ;
-    cout << current_test_angle << endl << endl ;
-    
-    cout << "Object angle" << endl ;
-    cout << player .element_attracting_the_player -> angle << endl << endl ;
-    */
-    float direction_to_follow_x ;
-    float direction_to_follow_y ;
-    
-    // Horizontal element
-    if ( player .element_attracting_the_player -> x_ratio_for_one_y == 1 
-            && player .element_attracting_the_player -> y_ratio_for_one_x == 0 )
-    {
-        direction_to_follow_x = 0 ;
-        direction_to_follow_y = 1 ;
-    }
-    
-    // Vertical element
-    else if ( player .element_attracting_the_player -> x_ratio_for_one_y == 0
-            && player .element_attracting_the_player -> y_ratio_for_one_x == 1 )
-    {
-        direction_to_follow_x = 1 ;
-        direction_to_follow_y = 0 ;
     }
     
     else
     {
-        if ( player .element_attracting_the_player -> y_ratio_for_one_x
-            > player .element_attracting_the_player -> x_ratio_for_one_y)
-        {
-            direction_to_follow_x = player .element_attracting_the_player -> y_ratio_for_one_x ;
-            direction_to_follow_y = 1 ;
-        }
-        
-        else
-        {
-            direction_to_follow_x = 1 ;
-            direction_to_follow_y = player .element_attracting_the_player -> x_ratio_for_one_y ;
-        }
+        cout << "Beneath the line" << endl << endl ;
     }
-    
-    // Bottom-left corner
-    if ( player .element_attracting_the_player -> x_direction == 1
-            && player .element_attracting_the_player -> y_direction == 1 )
-    {
-        direction_to_follow_x *= -1 ;
-        direction_to_follow_y *= 1 ;
-    }
-    
-    // Bottom-right corner
-    else if ( player .element_attracting_the_player -> x_direction == 1
-            && player .element_attracting_the_player -> y_direction == -1 )
-    {
-        direction_to_follow_x *= 1 ;
-        direction_to_follow_y *= 1 ;
-    }
-    
-    // Top-left corner
-    else if ( player .element_attracting_the_player -> x_direction == -1
-            && player .element_attracting_the_player -> y_direction == 1 )
-    {
-        direction_to_follow_x *= -1 ;
-        direction_to_follow_y *= -1 ;
-    }
-    
-    // Top-right corner
-    else if ( player .element_attracting_the_player -> x_direction == -1
-            && player .element_attracting_the_player -> y_direction == -1 )
-    {
-        direction_to_follow_x *= 1 ;
-        direction_to_follow_y *= -1 ;
-    }
-    
-    else if ( player .element_attracting_the_player -> x_direction == -1
-            && player .element_attracting_the_player -> y_direction == 0 )
-    {
-        direction_to_follow_y *= -1 ;
-    }
-    
-    else if ( player .element_attracting_the_player -> x_direction == 0
-            && player .element_attracting_the_player -> y_direction == 1 )
-    {
-        direction_to_follow_x *= -1 ;
-    }
-
-    
-    //bool element_found = false ;
-    //int counter = 0 ;
-    float previous_test_angle ;
-    
-    float current_difference_between_angles ;
-    /*
-    if ( player .element_attracting_the_player -> x_ratio_for_one_y
-            <= player .element_attracting_the_player -> y_ratio_for_one_x )
-    {
-        //cout << "Player X ratio for one Y: " << player_ratios .first << endl ;
-        //cout << "Element X ratio for one Y: " << element_attracting_the_player -> x_ratio_for_one_y << endl ;
-        current_difference_between_lowest_ratios = abs (
-                current_test_ratios .first
-                - ( player .element_attracting_the_player -> x_ratio_for_one_y
-                        * player .element_attracting_the_player -> x_direction )
-        ) ;
-    }*/
-
-    //else
-    //{
-        //cout << "Player Y ratio for one X: " << player_ratios .second << endl ;
-        //cout << "Element Y ratio for one X: " << element_attracting_the_player -> y_ratio_for_one_x << endl ;
-    /*
-    float element_angle = calculate_angle (
-        player .element_attracting_the_player -> left_boundary_x,
-        player .element_attracting_the_player -> left_boundary_y,
-        player .element_attracting_the_player -> right_boundary_x,
-        player .element_attracting_the_player -> right_boundary_y
-    ) ;
-    
-    current_difference_between_angles = abs ( current_test_angle - element_angle ) ;
-    
-    float previous_difference_between_angles ;
-    
-    
-    cout << "Direction to follow X: " << direction_to_follow_x << endl ;
-    cout << "Direction to follow Y: " << direction_to_follow_y << endl << endl ;
-    
-    
-    cout << "Element angle: " << element_angle << endl ;
-    
-    int last_iteration = 0 ;
     
     for ( int i = 0 ; i < 100 ; i++ )
     {
-        if ( current_test_angle == player .element_attracting_the_player -> angle )
+        // Increase player coordinates in direction to the element
+        
+        test_coordinates_from_player_position .first +=
+            line_going_to_the_element .direction_x * 1 ;
+        
+        test_coordinates_from_player_position .second +=
+            line_going_to_the_element .direction_y
+            * line_going_to_the_element .number_of_y_for_one_x ;
+        
+        if ( ! ( linear_equation_of_the_attracting_element
+            .point_is_to_the_left_of_the_line (
+                test_coordinates_from_player_position .first,
+                test_coordinates_from_player_position .second
+            ) ) )
         {
-            break ;
-        }
-        
-        
-        
-        test_coordinates_from_player_position .first += direction_to_follow_x ;
-        test_coordinates_from_player_position .second += direction_to_follow_y ;
-        
-        previous_test_angle = current_test_angle ;
-        previous_difference_between_angles = current_difference_between_angles ;
-        
-        current_test_angle = calculate_angle (
-            player .element_attracting_the_player -> left_boundary_x,
-            player .element_attracting_the_player -> left_boundary_y,
-            test_coordinates_from_player_position .first,
-            test_coordinates_from_player_position .second
-        ) ;
-
-
-        current_difference_between_angles = abs ( current_test_angle - element_angle ) ;
-       
-        
-        last_iteration = i ;
-        
-        if ( current_difference_between_angles > previous_difference_between_angles )
-        {
-            break ;
+            cout << "Number of iterations: " << i << endl << endl ;
+            return test_coordinates_from_player_position ;
         }
     }
+    cout << endl << endl ;
     
-    cout << "Found element at " << last_iteration << "th iteration" << endl << endl << endl ;
-    
-    cout << "Previous player angle: " << previous_test_angle << endl ;
-    cout << "Current player angle: " << current_test_angle << endl ;
-    
-    cout << "Previous difference between angles: " << previous_difference_between_angles << endl ;
-    cout << "Current difference between angles: " << current_difference_between_angles << endl << endl ;
-
     coordinates_of_closest_point .first = test_coordinates_from_player_position .first ;
     coordinates_of_closest_point .second = test_coordinates_from_player_position .second ;
-    */
+    
     return coordinates_of_closest_point ;
 }
 
@@ -689,16 +580,16 @@ int main(int argc, char** argv)
                 al_map_rgb_f ( 1, 1, 1 ), 1 ) ;
         
         
-        if ( previous_x != player .element_attracting_the_player -> right_boundary_x )
+        /*if ( previous_x != player .element_attracting_the_player -> right_boundary_x )
         {
             cout << endl << endl << endl ;
             cout << "Changing coordinates" << endl << endl << endl ;
-            coordinates_of_closest_point = 
+            */coordinates_of_closest_point = 
                 calculate_distance_between_player_and_attracting_element ( player ) ;
-        }
+        //}
         
         
-        previous_x = player .element_attracting_the_player -> right_boundary_x ;
+        //previous_x = player .element_attracting_the_player -> right_boundary_x ;
         
         al_draw_line (
                 player .x,

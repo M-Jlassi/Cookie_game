@@ -55,6 +55,8 @@ public:
     float value_of_y_when_x_is_zero ;
     int direction_x, direction_y ;
     
+    Linear_equation () ;
+    
     Linear_equation ( float number_of_y_for_one_x,
         float value_of_y_when_x_is_zero, int direction_x, int direction_y ) ;
     
@@ -63,7 +65,12 @@ public:
     bool point_is_on_the_line ( float x, float y ) ;
     
     float calculate_value_of_y_if_x_is_on_the_line ( float x ) ;
+    
+    Linear_equation calculate_line_going_in_the_opposite_direction () ;
 } ;
+
+Linear_equation calculate_linear_equation_with_one_coordinate ( float x1, float y1,
+    int direction_x, int direction_y, float number_of_y_for_one_x ) ;
 
 std::ostream& operator<<(std::ostream &strm, const Linear_equation &linear_equation ) ;
 
