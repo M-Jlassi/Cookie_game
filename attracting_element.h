@@ -67,6 +67,8 @@ public:
     float calculate_value_of_y_if_x_is_on_the_line ( float x ) ;
     
     Linear_equation calculate_line_going_in_the_opposite_direction () ;
+
+    std::pair <float, float> calculate_x_and_y_to_add_for_a_one_unit_movement () ;
 } ;
 
 Linear_equation calculate_linear_equation_with_one_coordinate ( float x1, float y1,

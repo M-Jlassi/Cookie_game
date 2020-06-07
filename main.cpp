@@ -84,6 +84,7 @@ std::pair <float, float> calculate_ratios ( float x1, float x2, float y1, float 
 std::pair <float, float> calculate_distance_between_player_and_attracting_element (
     Player player )
 {
+    cout << "Hello" << endl ;
     std::pair <float, float> coordinates_of_closest_point ;
     
     std::pair <float, float> test_coordinates_from_player_position ;
@@ -99,6 +100,7 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
         ) ;
     
     cout << "Linear equation of the attracting element" << endl ;
+    cout << linear_equation_of_the_attracting_element .number_of_y_for_one_x << endl ;
     cout << linear_equation_of_the_attracting_element << endl << endl ;
     
     // Verify if the player touches the element
@@ -242,17 +244,23 @@ std::pair <float, float> calculate_distance_between_player_and_attracting_elemen
     {
         cout << "Beneath the line" << endl << endl ;
     }
+    cout << "HELLO" ;
+    pair <float, float> x_and_y_to_add_for_a_one_unit_movement =
+        line_going_to_the_element .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
+    
+    cout << "For a one unit movement" << endl ;
+    cout << x_and_y_to_add_for_a_one_unit_movement .first << endl ;
+    cout << x_and_y_to_add_for_a_one_unit_movement .second << endl ;
     
     for ( int i = 0 ; i < 100 ; i++ )
     {
         // Increase player coordinates in direction to the element
         
         test_coordinates_from_player_position .first +=
-            line_going_to_the_element .direction_x * 1 ;
+            x_and_y_to_add_for_a_one_unit_movement .first ;
         
         test_coordinates_from_player_position .second +=
-            line_going_to_the_element .direction_y
-            * line_going_to_the_element .number_of_y_for_one_x ;
+            x_and_y_to_add_for_a_one_unit_movement .second ;
         
         if ( ! ( linear_equation_of_the_attracting_element
             .point_is_to_the_left_of_the_line (
