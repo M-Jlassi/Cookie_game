@@ -130,7 +130,7 @@ void Player::gravity ( std::vector<Attracting_element> elements )
 
     verify_if_player_can_jump () ;
 
-    get_closest_element ( elements ) ;
+    get_closest_element_from_the_list ( elements ) ;
 
     std::pair <float, float> speed_x_y = get_speed () ;
 
@@ -157,6 +157,7 @@ void Player::verify_if_player_can_jump ()
 
 void Player::get_closest_element ( std::vector<Attracting_element> elements )
 {
+    
     float distance_x_y_to_left_boundary ;
     float distance_x_y_to_right_boundary ;
     
@@ -175,13 +176,7 @@ void Player::get_closest_element ( std::vector<Attracting_element> elements )
             distance_x_y_to_left_boundary + distance_x_y_to_right_boundary
         ) ;
     }
-    /*
-    for ( int i = 0 ; i < elements .size () ; i++ )
-    {
-        cout << "Distance to " << ( i == 0 ? "floor" : i == 1 ? "fight wall" : "right edge" ) << endl ;
-        cout << distances_to_elements [ i ] << endl ;
-    }
-    cout << endl ;*/
+    
 
     std::vector<float>::iterator iterator_of_minimum = std::min_element (
         distances_to_elements .begin(), distances_to_elements .end()
@@ -197,6 +192,41 @@ void Player::get_closest_element ( std::vector<Attracting_element> elements )
 
     element_attracting_the_player = new Attracting_element ( elements [ address_of_minimum ] ) ;
 }
+
+
+
+void Player::get_closest_element_from_the_list (
+    std::vector < Attracting_element > attracting_elements )
+{
+    std::vector < int > number_of_one_unit_iterations_to_reach_elements ;
+    
+    for ( int i = 0 ; i < attracting_elements .size () ; i ++ )
+    {
+        number_of_one_unit_iterations_to_reach_elements .push_back (
+            calculate_number_of_one_unit_iterations_between_player_and_attracting_element (
+                attracting_elements [ i ] )
+        ) ;   
+    }
+    
+    
+    std::vector < int >::iterator iterator_of_minimum = std::min_element (
+        number_of_one_unit_iterations_to_reach_elements .begin(),
+        number_of_one_unit_iterations_to_reach_elements .end()
+    ) ;
+
+    int address_of_minimum = std::distance (
+        number_of_one_unit_iterations_to_reach_elements .begin(),
+        iterator_of_minimum ) ;
+
+    if ( ! ( * element_attracting_the_player == attracting_elements [ address_of_minimum ] ) )
+    {
+        gravity_changed = true ;
+    }
+
+    element_attracting_the_player = new Attracting_element ( attracting_elements [ address_of_minimum ] ) ;
+}
+
+
 
 
 std::pair <float, float> Player::get_speed ()
@@ -430,4 +460,185 @@ float calculate_ratio ( float x_static, float y_static,
     float ratio = moving_part / static_part ;
     
     return ratio ;
+}
+
+
+
+
+
+
+int Player::calculate_number_of_one_unit_iterations_between_player_and_attracting_element ( Attracting_element attracting_element )
+{    
+    std::pair <float, float> test_coordinates_from_player_position ;
+    test_coordinates_from_player_position .first = x ;
+    test_coordinates_from_player_position .second = y ;
+    
+    Linear_equation linear_equation_of_the_attracting_element =
+        calculate_linear_equation_of_element (
+            attracting_element .left_boundary_x,
+            attracting_element .left_boundary_y,
+            attracting_element .right_boundary_x,
+            attracting_element .right_boundary_y
+        ) ;
+    
+    
+    // Verify if the player touches the element
+    
+    if ( linear_equation_of_the_attracting_element .point_is_on_the_line ( x, y ) )
+    {
+        return 0 ;
+    }
+    
+    /*
+     * Verify if the player is above the element
+     * 
+     * If so, locate whether the player is:
+     *  Directly above: the closest way to the element will be the perpendicular to this element
+     *  To the left: the closest way to the element will be in the direction of the left boundary
+     *  To the right: the closest way to the element will be in the direction of the right boundary
+     * 
+     */
+    
+    Linear_equation line_going_to_the_element ;
+            
+    // Player is above the element?
+    
+    if ( linear_equation_of_the_attracting_element
+        .point_is_to_the_left_of_the_line ( x, y ) )
+    {        
+        Linear_equation left_boundary_perpendicular_to_the_attracting_element =
+            calculate_perpendicular_linear_equation (
+                attracting_element .left_boundary_x,
+                attracting_element .left_boundary_y,
+                attracting_element .right_boundary_x,
+                attracting_element .right_boundary_y
+            ) ;
+        
+        if ( left_boundary_perpendicular_to_the_attracting_element
+            .point_is_on_the_line ( x, y ) )
+        {
+            // Reverse perpendicular until get to the element
+            
+            line_going_to_the_element =
+                left_boundary_perpendicular_to_the_attracting_element 
+                .calculate_line_going_in_the_opposite_direction () ;
+        }
+        
+        else if ( left_boundary_perpendicular_to_the_attracting_element
+            .point_is_to_the_left_of_the_line (x, y ) )
+        {
+            // Linear_equation from the player to the left boundary position of the element
+            
+            line_going_to_the_element = calculate_linear_equation_of_element (
+                x, y,
+                attracting_element .left_boundary_x,
+                attracting_element .left_boundary_y
+            ) ;
+        }
+        
+        // Player is to the right of the left perpendicular
+        
+        else
+        {
+            float x_right_boundary_if_line_continues =
+                attracting_element .right_boundary_x
+                + ( linear_equation_of_the_attracting_element .direction_x * 1 ) ;
+            
+            float y_right_boundary_if_line_continues =
+                attracting_element .right_boundary_y
+                + ( linear_equation_of_the_attracting_element .direction_y
+                * linear_equation_of_the_attracting_element .number_of_y_for_one_x ) ;
+            
+            Linear_equation right_boundary_perpendicular_to_the_attracting_element =
+                calculate_perpendicular_linear_equation (
+                    attracting_element .right_boundary_x,
+                    attracting_element .right_boundary_y,
+                    x_right_boundary_if_line_continues,
+                    y_right_boundary_if_line_continues
+                ) ;
+            
+            Linear_equation line_going_in_the_opposite_direction =
+                right_boundary_perpendicular_to_the_attracting_element
+                .calculate_line_going_in_the_opposite_direction () ;
+            
+            // The player is just above the element
+            
+            if ( right_boundary_perpendicular_to_the_attracting_element
+                .point_is_to_the_left_of_the_line ( x, y ) )
+            {
+                line_going_to_the_element =
+                    calculate_linear_equation_with_one_coordinate (
+                        x, y,
+                        line_going_in_the_opposite_direction .direction_x,
+                        line_going_in_the_opposite_direction .direction_y,
+                        line_going_in_the_opposite_direction .number_of_y_for_one_x
+                    ) ;
+            }
+            
+            // The player is on the right boundary perpendicular
+            
+            else if ( right_boundary_perpendicular_to_the_attracting_element
+                .point_is_on_the_line ( x, y ) )
+            {                
+                line_going_to_the_element = line_going_in_the_opposite_direction ;
+            }
+            
+            // The player is to the right of the element
+            
+            else
+            {
+                line_going_to_the_element = calculate_linear_equation_of_element (
+                    x, y,
+                    attracting_element .right_boundary_x,
+                    attracting_element .right_boundary_y
+                ) ;
+            }
+        }
+    }
+    
+    else
+    {
+        return -1 ;
+    }
+    
+    pair <float, float> x_and_y_to_add_for_a_one_unit_movement =
+        line_going_to_the_element .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
+    
+    /*
+     * PRINT ABOVE THE PLAYER
+    std::ostringstream ss ;
+    ss << x_and_y_to_add_for_a_one_unit_movement .first << " ; " ;
+    ss << x_and_y_to_add_for_a_one_unit_movement .second ;
+    string display_x_and_y ( ss .str () ) ;
+    
+    print_above_player (player, display_x_and_y ) ;
+    */
+    
+    bool has_reached_the_element = false ;
+    int number_of_iterations = 0 ;
+    
+    while ( ! has_reached_the_element )
+    {
+        // Increase player coordinates in direction to the element
+        
+        test_coordinates_from_player_position .first +=
+            x_and_y_to_add_for_a_one_unit_movement .first ;
+        
+        test_coordinates_from_player_position .second +=
+            x_and_y_to_add_for_a_one_unit_movement .second ;
+        
+        if ( ! ( linear_equation_of_the_attracting_element
+            .point_is_to_the_left_of_the_line (
+                test_coordinates_from_player_position .first,
+                test_coordinates_from_player_position .second
+            ) ) )
+        {
+            has_reached_the_element = true ;
+        }
+        
+        number_of_iterations ++ ;
+    }
+    
+    
+    return number_of_iterations ;
 }

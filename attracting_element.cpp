@@ -978,59 +978,57 @@ std::pair<float, float> Linear_equation::calculate_x_and_y_to_add_for_a_one_unit
 {
     std::pair<float, float> x_and_y ;
     
-    /*
-     * We try to resolve x² + y² = 1
-     * With y² = ( number_of_y_for_one_x * x )²
-     * 
-     * Total of sum:
-     * Then we have x² + ( number_of_y_for_one_x * x )² = 1
-     * So this is ( 1 + number_of_y_for_one_x ) * x² = 1
-     * 
-     * X for a one unit movement:
-     * x² = 1 / ( 1 + number_of_y_for_one_x )
-     * 
-     * Y for a one unit movement:
-     * y = number_of_y_for_one_x * x ;
-     */
-    
-    float x_squared = 1 ;
-    float y_squared = ( number_of_y_for_one_x * x_squared ) *
-        ( number_of_y_for_one_x * x_squared ) ;
-    
-    float total_of_sum = x_squared + y_squared ;
-    
-    float x_squared_for_a_one_unit_movement = 1 / total_of_sum ;
-    float x_for_a_one_unit_movement = sqrt ( x_squared_for_a_one_unit_movement ) ;
-    
-    float y_for_a_one_unit_movement =
-        number_of_y_for_one_x * x_for_a_one_unit_movement ;
-    
     // Vertical line
     
     if ( std::isinf ( number_of_y_for_one_x ) )
     {
         x_and_y .first = 0 ;
-        x_and_y .second = direction_y * y_for_a_one_unit_movement ;
+        x_and_y .second = direction_y * 1 ;
     }
     
     // Horizontal line
     
     else if ( number_of_y_for_one_x == 0 )
     {
-        x_and_y .first = direction_x * x_for_a_one_unit_movement ;
+        x_and_y .first = direction_x * 1 ;
         x_and_y .second = 0 ;
     }
     
     else
     {
+        /*
+        * We try to solve x² + y² = 1
+        * With y² = ( number_of_y_for_one_x * x )²
+        * 
+        * Total of sum:
+        * Then we have x² + ( number_of_y_for_one_x * x )² = 1
+        * So this is ( 1 + number_of_y_for_one_x ) * x² = 1
+        * 
+        * X for a one unit movement:
+        * x² = 1 / ( 1 + number_of_y_for_one_x )
+        * 
+        * Y for a one unit movement:
+        * y = number_of_y_for_one_x * x ;
+        */
+        
+        
+        float x_squared = 1 ;
+        float y_squared = ( number_of_y_for_one_x * x_squared ) *
+            ( number_of_y_for_one_x * x_squared ) ;
+
+        float total_of_sum = x_squared + y_squared ;
+
+        float x_squared_for_a_one_unit_movement = 1 / total_of_sum ;
+        float x_for_a_one_unit_movement = sqrt ( x_squared_for_a_one_unit_movement ) ;
+
+        float y_for_a_one_unit_movement =
+            number_of_y_for_one_x * x_for_a_one_unit_movement ;
+        
+    
         x_and_y .first = direction_x * x_for_a_one_unit_movement ;
         x_and_y .second = direction_y * y_for_a_one_unit_movement ;
     }
-    /*
-    cout << "One unit movement" << endl ;
-    cout << "HELLO" << endl ;
-    cout << x_and_y .first << endl ;
-    cout << x_and_y .second << endl ;
-    */
+
+    
     return x_and_y ;
 }

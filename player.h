@@ -55,11 +55,15 @@ public :
     
     void get_closest_element ( std::vector<Attracting_element> elements ) ;
     
+    void get_closest_element_from_the_list ( std::vector < Attracting_element > attracting_elements ) ;
+    
     std::pair <float, float> get_speed () ;
     
     std::pair <float, float> smoothen_landing ( std::pair <float, float> speed_x_y ) ;
     
     std::pair<float, float> get_player_ratio_depending_on_the_current_attracting_element () ;
+    
+    int calculate_number_of_one_unit_iterations_between_player_and_attracting_element ( Attracting_element attracting_element ) ;
     
 } ;
 
