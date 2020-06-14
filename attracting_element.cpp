@@ -103,6 +103,13 @@ Attracting_element::Attracting_element ( int left_boundary_x, int left_boundary_
         y_direction = 0 ;
     }
     
+    
+    linear_equation = calculate_linear_equation_of_element (
+        left_boundary_x,
+        left_boundary_y,
+        right_boundary_x,
+        right_boundary_y
+    ) ;
 }
 
 Attracting_element::Attracting_element ( Attracting_element const& element_to_copy ) :
@@ -114,6 +121,7 @@ Attracting_element::Attracting_element ( Attracting_element const& element_to_co
     y_ratio_for_one_x ( element_to_copy .y_ratio_for_one_x ),
     x_direction ( element_to_copy .x_direction ),
     y_direction ( element_to_copy .y_direction ),
+    linear_equation ( element_to_copy .linear_equation ),
     horizontal ( element_to_copy .horizontal ),
     angle ( element_to_copy .angle) {}
 
@@ -129,6 +137,7 @@ Attracting_element& Attracting_element::operator = ( Attracting_element const& e
         y_ratio_for_one_x = element_to_copy .y_ratio_for_one_x ;
         x_direction = element_to_copy .x_direction,
         y_direction = element_to_copy .y_direction,
+        linear_equation = element_to_copy .linear_equation,
         horizontal = element_to_copy .horizontal,
         angle = element_to_copy .angle ;
     }
@@ -149,6 +158,137 @@ bool Attracting_element::operator == (const Attracting_element& element)
 
     return false;
 }
+
+
+Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the_element (
+        float x, float y )
+{
+    Linear_equation line_going_in_the_direction_of_the_element = Linear_equation () ;
+    
+    // Verify if the player touches the element
+
+    if ( linear_equation .point_is_on_the_line ( x, y ) )
+    {
+        //return 0 ;
+    }
+
+    /*
+     * Verify if the player is above the element
+     * 
+     * If so, locate whether the player is:
+     *  Directly above: the closest way to the element will be the perpendicular to this element
+     *  To the left: the closest way to the element will be in the direction of the left boundary
+     *  To the right: the closest way to the element will be in the direction of the right boundary
+     * 
+     */
+
+
+    // Player is above the element?
+
+    if ( linear_equation .point_is_to_the_left_of_the_line ( x, y ) )
+    {        
+        Linear_equation left_boundary_perpendicular_to_the_attracting_element =
+            calculate_perpendicular_linear_equation (
+                left_boundary_x,
+                left_boundary_y,
+                right_boundary_x,
+                right_boundary_y
+            ) ;
+
+        if ( left_boundary_perpendicular_to_the_attracting_element
+            .point_is_on_the_line ( x, y ) )
+        {
+            // Reverse perpendicular until get to the element
+
+            line_going_in_the_direction_of_the_element =
+                left_boundary_perpendicular_to_the_attracting_element 
+                .calculate_line_going_in_the_opposite_direction () ;
+        }
+
+        else if ( left_boundary_perpendicular_to_the_attracting_element
+            .point_is_to_the_left_of_the_line (x, y ) )
+        {
+            // Linear_equation from the player to the left boundary position of the element
+
+            line_going_in_the_direction_of_the_element = calculate_linear_equation_of_element (
+                x, y,
+                left_boundary_x,
+                left_boundary_y
+            ) ;
+        }
+
+        // Player is to the right of the left perpendicular
+
+        else
+        {
+            float x_right_boundary_if_line_continues =
+                right_boundary_x
+                + ( linear_equation .direction_x * 1 ) ;
+
+            float y_right_boundary_if_line_continues =
+                right_boundary_y
+                + ( linear_equation .direction_y
+                * linear_equation .number_of_y_for_one_x ) ;
+
+            Linear_equation right_boundary_perpendicular_to_the_attracting_element =
+                calculate_perpendicular_linear_equation (
+                    right_boundary_x,
+                    right_boundary_y,
+                    x_right_boundary_if_line_continues,
+                    y_right_boundary_if_line_continues
+                ) ;
+
+            Linear_equation line_going_in_the_opposite_direction =
+                right_boundary_perpendicular_to_the_attracting_element
+                .calculate_line_going_in_the_opposite_direction () ;
+
+            // The player is just above the element
+
+            if ( right_boundary_perpendicular_to_the_attracting_element
+                .point_is_to_the_left_of_the_line ( x, y ) )
+            {
+                line_going_in_the_direction_of_the_element =
+                    calculate_linear_equation_with_one_coordinate (
+                        x, y,
+                        line_going_in_the_opposite_direction .direction_x,
+                        line_going_in_the_opposite_direction .direction_y,
+                        line_going_in_the_opposite_direction .number_of_y_for_one_x
+                    ) ;
+            }
+
+            // The player is on the right boundary perpendicular
+
+            else if ( right_boundary_perpendicular_to_the_attracting_element
+                .point_is_on_the_line ( x, y ) )
+            {                
+                line_going_in_the_direction_of_the_element =
+                    line_going_in_the_opposite_direction ;
+            }
+
+            // The player is to the right of the element
+
+            else
+            {
+                line_going_in_the_direction_of_the_element =
+                    calculate_linear_equation_of_element (
+                        x, y,
+                        right_boundary_x,
+                        right_boundary_y
+                    ) ;
+            }
+        }
+    }
+
+    else
+    {
+        //return -1 ;
+    }
+    
+    
+    return line_going_in_the_direction_of_the_element ;
+}
+        
+        
 
 std::ostream& operator<<(std::ostream &strm, const Attracting_element &element)
 {

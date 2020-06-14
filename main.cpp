@@ -301,7 +301,6 @@ void elements_init ()
 
 
 
-
 int main(int argc, char** argv)
 {
     must_init ( al_init (), "allegro" ) ;
@@ -518,6 +517,7 @@ int main(int argc, char** argv)
     //cout << "Hi" << endl ;
     while ( 1 ) 
     {        
+        al_clear_to_color ( al_map_rgb_f ( 0, 0, 0 ) ) ;
         al_wait_for_event ( event_queue, &event ) ;
         
         switch ( event .type )
@@ -556,7 +556,6 @@ int main(int argc, char** argv)
         if ( event .type == ALLEGRO_EVENT_DISPLAY_CLOSE ) break ;
         if ( player .done ) break ;
         
-        al_clear_to_color ( al_map_rgb_f ( 0, 0, 0 ) ) ;
         
         al_draw_filled_triangle (
                 player.x,
@@ -598,26 +597,6 @@ int main(int argc, char** argv)
                 player .element_attracting_the_player -> right_boundary_x,
                 player .element_attracting_the_player -> right_boundary_y,
                 al_map_rgb_f ( 1, 1, 1 ), 1 ) ;
-        
-        
-        /*if ( previous_x != player .element_attracting_the_player -> right_boundary_x )
-        {
-            cout << endl << endl << endl ;
-            cout << "Changing coordinates" << endl << endl << endl ;
-            */coordinates_of_closest_point = 
-                calculate_distance_between_player_and_attracting_element ( player ) ;
-        //}
-        
-        
-        //previous_x = player .element_attracting_the_player -> right_boundary_x ;
-        
-        al_draw_line (
-                player .x,
-                player .y,
-                coordinates_of_closest_point .first,
-                coordinates_of_closest_point .second,
-                al_map_rgb_f ( 0.2, 1, 1 ), 1
-        ) ;
         
           
         al_flip_display () ;

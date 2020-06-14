@@ -18,33 +18,6 @@
 #include <string>
 #include <math.h>
 
-class Attracting_element
-{
-    
-public:
-    
-    int left_boundary_x, left_boundary_y ;
-    int right_boundary_x, right_boundary_y ;
-    float number_of_y_for_one_x ;
-    float angle ;
-    bool horizontal ;
-    float x_ratio_for_one_y, y_ratio_for_one_x ;
-    int x_direction, y_direction ;
-    
-    Attracting_element () ;
-    
-    Attracting_element ( int left_boundary_x, int left_boundary_y,
-        int right_boundary_x, int right_boundary_y ) ;
-    
-    Attracting_element ( Attracting_element const& element_to_copy ) ;
-    
-    Attracting_element& operator = ( Attracting_element const& element_to_copy ) ;
-    
-    bool operator == (const Attracting_element& element) ;
-    
-} ;
-
-std::ostream& operator<<(std::ostream &strm, const Attracting_element &element) ;
 
 class Linear_equation
 {
@@ -89,6 +62,40 @@ float calculate_value_of_y_when_x_is_zero ( float x1, float y1, float x2, float 
 Linear_equation calculate_perpendicular_linear_equation (
     float x1, float y1, float x2, float y2
 ) ;
+
+
+class Attracting_element
+{
+    
+public:
+    
+    int left_boundary_x, left_boundary_y ;
+    int right_boundary_x, right_boundary_y ;
+    float number_of_y_for_one_x ;
+    float angle ;
+    bool horizontal ;
+    float x_ratio_for_one_y, y_ratio_for_one_x ;
+    int x_direction, y_direction ;
+    Linear_equation linear_equation ;
+    
+    Attracting_element () ;
+    
+    Attracting_element ( int left_boundary_x, int left_boundary_y,
+        int right_boundary_x, int right_boundary_y ) ;
+    
+    Attracting_element ( Attracting_element const& element_to_copy ) ;
+    
+    Attracting_element& operator = ( Attracting_element const& element_to_copy ) ;
+    
+    bool operator == (const Attracting_element& element) ;
+    
+    Linear_equation calculate_line_going_in_the_direction_of_the_element (
+        float x, float y ) ;
+    
+} ;
+
+std::ostream& operator<<(std::ostream &strm, const Attracting_element &element) ;
+
 
 #endif /* ATTRACTING_ELEMENT_H */
 

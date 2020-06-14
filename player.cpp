@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
+#include <allegro5/allegro_primitives.h>
+
 #include "player.h"
-#include <iostream>
 
 using namespace std;
 
@@ -130,7 +131,7 @@ void Player::gravity ( std::vector<Attracting_element> elements )
 
     verify_if_player_can_jump () ;
 
-    get_closest_element_from_the_list ( elements ) ;
+    get_closest_element_from_the_list_of_elements ( elements ) ;
 
     std::pair <float, float> speed_x_y = get_speed () ;
 
@@ -143,193 +144,184 @@ void Player::gravity ( std::vector<Attracting_element> elements )
     y += speed_x_y .second ;
 }
 
+
+
 void Player::verify_if_player_can_jump ()
 {
-    std::pair <float, float> player_ratios_x_y =
-        Player::get_player_ratio_depending_on_the_current_attracting_element () ;
-    
-    if ( player_ratios_x_y .first == element_attracting_the_player -> x_ratio_for_one_y
-        && player_ratios_x_y .second == element_attracting_the_player -> y_ratio_for_one_x )
+    if ( element_attracting_the_player ->
+        linear_equation .point_is_on_the_line ( x, y ) )
     {
         can_jump = true ;
     }
 }
 
-void Player::get_closest_element ( std::vector<Attracting_element> elements )
+
+
+
+
+void Player::get_closest_element_from_the_list_of_elements (
+    std::vector < Attracting_element > list_of_attracting_elements )
 {
+    pair <float, float> test_coordinates_from_player_position ;
+    test_coordinates_from_player_position .first = x ;
+    test_coordinates_from_player_position .second = y ;
     
-    float distance_x_y_to_left_boundary ;
-    float distance_x_y_to_right_boundary ;
     
-    std::vector<float> distances_to_elements ;
+    /*
+     * Initialize the position of the point where we will start iterating towards the elements.
+     * (list_of_test_coordinates_from_player_position) 
+     * 
+     * Initialize the directions towards which we will iterate.
+     * (list_of_x_and_y_to_add_for_a_one_unit_movement)
+     */
     
-    for ( int i = 0 ; i < elements .size() ; i++ )
+    vector < pair < float, float > > list_of_test_coordinates_from_player_position ;
+    
+    Linear_equation linear_equation_of_the_attracting_element ;
+    vector < Linear_equation > list_of_linear_equations_of_the_attracting_elements ;
+    
+    Linear_equation line_going_in_the_direction_of_the_element ;
+    
+    pair <float, float> x_and_y_to_add_for_a_one_unit_movement ;
+    vector < pair < float, float > > list_of_x_and_y_to_add_for_a_one_unit_movement ;
+    
+    
+    for ( int i = 0 ; i < list_of_attracting_elements .size () ; i ++ )
     {
-        distance_x_y_to_left_boundary = 
-                abs ( x - elements [ i ] .left_boundary_x )
-                + abs ( y - elements [ i ] .left_boundary_y );
-        distance_x_y_to_right_boundary = 
-                abs ( x - elements [ i ] .right_boundary_x )
-                + abs ( y - elements [ i ] .right_boundary_y );
+        list_of_test_coordinates_from_player_position .push_back (
+            test_coordinates_from_player_position ) ;
         
-        distances_to_elements .push_back (
-            distance_x_y_to_left_boundary + distance_x_y_to_right_boundary
+        
+        
+        linear_equation_of_the_attracting_element =
+        calculate_linear_equation_of_element (
+            list_of_attracting_elements [ i ] .left_boundary_x,
+            list_of_attracting_elements [ i ] .left_boundary_y,
+            list_of_attracting_elements [ i ] .right_boundary_x,
+            list_of_attracting_elements [ i ] .right_boundary_y
         ) ;
+    
+        list_of_linear_equations_of_the_attracting_elements .push_back (
+            linear_equation_of_the_attracting_element ) ;
+    
+    
+        line_going_in_the_direction_of_the_element =
+            list_of_attracting_elements [ i ]
+            .calculate_line_going_in_the_direction_of_the_element ( x, y ) ;
+        
+        
+        x_and_y_to_add_for_a_one_unit_movement =
+            line_going_in_the_direction_of_the_element
+            .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
+        
+
+        list_of_x_and_y_to_add_for_a_one_unit_movement .push_back (
+            x_and_y_to_add_for_a_one_unit_movement ) ;
     }
     
-
-    std::vector<float>::iterator iterator_of_minimum = std::min_element (
-        distances_to_elements .begin(), distances_to_elements .end()
-    ) ;
-
-    int address_of_minimum = std::distance ( distances_to_elements .begin(),
-            iterator_of_minimum ) ;
-
-    if ( ! ( * element_attracting_the_player == elements [ address_of_minimum ] ) )
+    
+    vector < int > index_of_elements_reached ;
+    bool has_reached_an_element = false ;
+    int number_of_iterations = 0 ;
+    
+    while ( ! has_reached_an_element )
     {
-        gravity_changed = true ;
-    }
+        for ( int i = 0 ; i < list_of_attracting_elements .size () ; i ++ )
+        {
+            // Increase player coordinates in direction to the element
+        
+            list_of_test_coordinates_from_player_position [ i ] .first +=
+                list_of_x_and_y_to_add_for_a_one_unit_movement [ i ] .first ;
 
-    element_attracting_the_player = new Attracting_element ( elements [ address_of_minimum ] ) ;
+            list_of_test_coordinates_from_player_position [ i ] .second +=
+                list_of_x_and_y_to_add_for_a_one_unit_movement [ i ] .second ;
+
+            
+            if ( ! ( list_of_linear_equations_of_the_attracting_elements [ i ]
+                .point_is_to_the_left_of_the_line (
+                    list_of_test_coordinates_from_player_position [ i ] .first,
+                    list_of_test_coordinates_from_player_position [ i ] .second
+                ) ) )
+            {
+                index_of_elements_reached .push_back ( i ) ;
+                has_reached_an_element = true ;
+            }
+        }
+        
+        
+        number_of_iterations ++ ;
+    }
+    
+    
+    for ( int i = 0 ; i < list_of_attracting_elements .size () ; i ++ )
+    {
+        al_draw_line (
+                x,
+                y,
+                list_of_test_coordinates_from_player_position [ i ] .first,
+                list_of_test_coordinates_from_player_position [ i ] .second,
+                al_map_rgb_f ( 0.2, 1, 1 ), 1
+        ) ;    
+    }
+    
+    
+    int index_of_new_attracting_element ;
+    
+    if ( index_of_elements_reached .size () == 2 )
+    {
+        for ( int i = 0 ; i < index_of_elements_reached .size () ; i ++ )
+        {
+            if ( list_of_attracting_elements [ index_of_elements_reached [ i ] ]
+                == *element_attracting_the_player )
+            {
+                if ( i == 1 )
+                {
+                    index_of_new_attracting_element = 0 ;
+                }
+                
+                if ( i == 0 )
+                {
+                    index_of_new_attracting_element = 1 ;
+                }
+            }
+        }
+    }
+    
+    else index_of_new_attracting_element = index_of_elements_reached [ 0 ] ;
+    
+    
+    
+    // PRINT ABOVE THE PLAYER
+    std::ostringstream ss ;
+    //ss << number_of_iterations ;
+    //string iterations ( ss .str () ) ;
+    
+    for ( int i = 0 ; i < index_of_elements_reached .size () ; i ++ )
+    {
+        ss << index_of_elements_reached [ i ] << " ; " ;
+    }
+    
+    string indices ( ss .str () ) ;
+    
+    print_above_player ( indices ) ;
+    
+    
+    
+    
+    element_attracting_the_player = new Attracting_element (
+        list_of_attracting_elements [ index_of_new_attracting_element ] ) ;
 }
-
-
-
-void Player::get_closest_element_from_the_list (
-    std::vector < Attracting_element > attracting_elements )
-{
-    std::vector < int > number_of_one_unit_iterations_to_reach_elements ;
-    
-    for ( int i = 0 ; i < attracting_elements .size () ; i ++ )
-    {
-        number_of_one_unit_iterations_to_reach_elements .push_back (
-            calculate_number_of_one_unit_iterations_between_player_and_attracting_element (
-                attracting_elements [ i ] )
-        ) ;   
-    }
-    
-    
-    std::vector < int >::iterator iterator_of_minimum = std::min_element (
-        number_of_one_unit_iterations_to_reach_elements .begin(),
-        number_of_one_unit_iterations_to_reach_elements .end()
-    ) ;
-
-    int address_of_minimum = std::distance (
-        number_of_one_unit_iterations_to_reach_elements .begin(),
-        iterator_of_minimum ) ;
-
-    if ( ! ( * element_attracting_the_player == attracting_elements [ address_of_minimum ] ) )
-    {
-        gravity_changed = true ;
-    }
-
-    element_attracting_the_player = new Attracting_element ( attracting_elements [ address_of_minimum ] ) ;
-}
-
-
 
 
 std::pair <float, float> Player::get_speed ()
-{
-    std::pair <float, float> speed_x_y ;
+{ 
+    Linear_equation line_going_in_the_direction_of_the_element = 
+        element_attracting_the_player ->
+        calculate_line_going_in_the_direction_of_the_element ( x, y ) ;
     
-    std::pair <float, float> player_ratios = get_player_ratio_depending_on_the_current_attracting_element () ;
-    
-    
-    float difference_between_lowest_ratios ;
-    
-    if ( player_ratios .first <= player_ratios .second )
-    {
-        //cout << player_ratios .first << endl ;
-        //cout << element_attracting_the_player -> x_ratio_for_one_y << endl ;
-        difference_between_lowest_ratios = abs (
-                player_ratios .first - element_attracting_the_player -> x_ratio_for_one_y
-        ) ;
-    }
-    
-    else if ( player_ratios .first > player_ratios .second )
-    {
-        //cout << player_ratios .second << endl ;
-        //cout << element_attracting_the_player -> y_ratio_for_one_x << endl ;
-        difference_between_lowest_ratios = abs (
-                player_ratios .second - element_attracting_the_player -> y_ratio_for_one_x
-        ) ;
-    }
-    
-    if ( difference_between_lowest_ratios < 0.1 )
-    {
-        //cout << "YES" << endl ;
-        speed_x_y .first = 0 ;
-        speed_x_y .second = 0 ;
-    }
-    
-    // Horizontal element
-    else if ( element_attracting_the_player -> x_ratio_for_one_y == 1 
-        && element_attracting_the_player -> y_ratio_for_one_x == 0 )
-    {
-        speed_x_y .first = 0 ;
-        speed_x_y .second = 1 ;
-    }
-    
-    // Vertical element
-    else if ( element_attracting_the_player -> x_ratio_for_one_y == 0
-        && element_attracting_the_player -> y_ratio_for_one_x == 1 )
-    {
-        speed_x_y .first = 1 ;
-        speed_x_y .second = 0 ;
-    }
-    
-    else
-    {
-        speed_x_y .first = element_attracting_the_player -> y_ratio_for_one_x ;
-        speed_x_y .second = element_attracting_the_player -> x_ratio_for_one_y ;
-    }
-    
-    // Bottom-left corner
-    if ( element_attracting_the_player -> x_direction == 1
-        && element_attracting_the_player -> y_direction == 1 )
-    {
-        speed_x_y .first *= -1 ;
-        speed_x_y .second *= 1 ;
-    }
-    
-    // Bottom-right corner
-    else if ( element_attracting_the_player -> x_direction == 1
-        && element_attracting_the_player -> y_direction == -1 )
-    {
-        speed_x_y .first *= 1 ;
-        speed_x_y .second *= 1 ;
-    }
-    
-    // Top-left corner
-    else if ( element_attracting_the_player -> x_direction == -1
-        && element_attracting_the_player -> y_direction == 1 )
-    {
-        speed_x_y .first *= -1 ;
-        speed_x_y .second *= -1 ;
-    }
-    
-    // Top-right corner
-    else if ( element_attracting_the_player -> x_direction == -1
-        && element_attracting_the_player -> y_direction == -1 )
-    {
-        speed_x_y .first *= 1 ;
-        speed_x_y .second *= -1 ;
-    }
-    
-    // Ceiling
-    else if ( element_attracting_the_player -> x_direction == -1
-        && element_attracting_the_player -> y_direction == 0 )
-    {
-        speed_x_y .second *= -1 ;
-    }
-    
-    // Left wall
-    else if ( element_attracting_the_player -> x_direction == 0
-        && element_attracting_the_player -> y_direction == 1 )
-    {
-        speed_x_y .first *= -1 ;
-    }
+    std::pair < float, float > speed_x_y =
+        line_going_in_the_direction_of_the_element
+        .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
     
     return speed_x_y ;
 }
@@ -641,4 +633,20 @@ int Player::calculate_number_of_one_unit_iterations_between_player_and_attractin
     
     
     return number_of_iterations ;
+}
+
+
+
+void Player::print_above_player ( string text )
+{
+    int length_of_string = text .length () ;
+    
+    char char_array [ length_of_string + 1 ] ;
+    
+    strcpy ( char_array, text .c_str () ) ;
+    
+    ALLEGRO_FONT* font = al_create_builtin_font();
+    
+    al_draw_text ( font, al_map_rgb ( 255, 255, 255 ),
+        x, y - 50, ALLEGRO_ALIGN_CENTER, char_array ) ;
 }

@@ -17,9 +17,14 @@
 #include "attracting_element.h"
 
 #include <allegro5/allegro5.h>
+#include <allegro5/allegro_font.h>
+
 #include <vector>
 #include <tuple>
 #include <algorithm>
+#include <sstream>
+#include <iostream>
+#include <string>
 
 // Extern to avoid multiple definitions
 // Source: http://www.cplusplus.com/forum/unices/5784/#msg25741 (jsmith answer)
@@ -57,6 +62,8 @@ public :
     
     void get_closest_element_from_the_list ( std::vector < Attracting_element > attracting_elements ) ;
     
+    void get_closest_element_from_the_list_of_elements ( std::vector < Attracting_element > list_of_attracting_elements ) ;
+    
     std::pair <float, float> get_speed () ;
     
     std::pair <float, float> smoothen_landing ( std::pair <float, float> speed_x_y ) ;
@@ -65,6 +72,7 @@ public :
     
     int calculate_number_of_one_unit_iterations_between_player_and_attracting_element ( Attracting_element attracting_element ) ;
     
+    void print_above_player ( std::string text ) ;
 } ;
 
 float calculate_ratio ( float x_static, float y_static, float x_moving, float y_moving ) ;
