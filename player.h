@@ -25,6 +25,7 @@
 #include <sstream>
 #include <iostream>
 #include <string>
+#include <numeric>
 
 // Extern to avoid multiple definitions
 // Source: http://www.cplusplus.com/forum/unices/5784/#msg25741 (jsmith answer)
@@ -38,7 +39,7 @@ public :
     float x, y ;
     bool is_in_jump ;
     int jump_timer ;
-    Attracting_element * element_attracting_the_player ;
+    std::vector < Attracting_element > list_of_elements_attracting_the_player ;
     bool gravity_changed ;
     bool can_jump ;
     bool done ;
@@ -46,7 +47,7 @@ public :
     const int number_of_frames_in_a_jump = 20 ;
     
     
-    Player ( Attracting_element * element ) ;
+    Player ( std::vector < Attracting_element > list_of_elements_attracting_the_player ) ;
     
     void move () ;
     
@@ -65,6 +66,8 @@ public :
     void get_closest_element_from_the_list_of_elements ( std::vector < Attracting_element > list_of_attracting_elements ) ;
     
     std::pair <float, float> get_speed () ;
+    
+    std::pair < float, float > calculate_distance_between_the_player_and_the_first_attracting_element () ;
     
     std::pair <float, float> smoothen_landing ( std::pair <float, float> speed_x_y ) ;
     

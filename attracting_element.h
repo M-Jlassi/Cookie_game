@@ -14,9 +14,12 @@
 #ifndef ATTRACTING_ELEMENT_H
 #define ATTRACTING_ELEMENT_H
 
+#include <allegro5/allegro_primitives.h>
+
 #include <iostream>
 #include <string>
 #include <math.h>
+#include <vector>
 
 
 class Linear_equation
@@ -89,12 +92,17 @@ public:
     
     bool operator == (const Attracting_element& element) ;
     
+    Linear_equation calculate_linear_equation () ;
+    
     Linear_equation calculate_line_going_in_the_direction_of_the_element (
         float x, float y ) ;
     
 } ;
 
 std::ostream& operator<<(std::ostream &strm, const Attracting_element &element) ;
+
+void draw_map ( std :: vector < Attracting_element > elements_of_the_map ) ;
+
 
 
 #endif /* ATTRACTING_ELEMENT_H */

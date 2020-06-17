@@ -160,6 +160,16 @@ bool Attracting_element::operator == (const Attracting_element& element)
 }
 
 
+Linear_equation Attracting_element :: calculate_linear_equation ()
+{
+    return calculate_linear_equation_of_element (
+        left_boundary_x, left_boundary_y,
+        right_boundary_x, right_boundary_y
+    ) ;
+}
+
+
+
 Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the_element (
         float x, float y )
 {
@@ -169,7 +179,7 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
 
     if ( linear_equation .point_is_on_the_line ( x, y ) )
     {
-        //return 0 ;
+        return Linear_equation () ;
     }
 
     /*
@@ -281,7 +291,7 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
 
     else
     {
-        //return -1 ;
+        return Linear_equation () ;
     }
     
     
@@ -635,7 +645,7 @@ cout << endl << endl ;
 
 
 Linear_equation::Linear_equation () : number_of_y_for_one_x ( 0 ),
-    value_of_y_when_x_is_zero ( 0 ), direction_x ( 1 ), direction_y ( 0 )
+    value_of_y_when_x_is_zero ( 0 ), direction_x ( 0 ), direction_y ( 0 )
 {
     equation_string = Linear_equation ( number_of_y_for_one_x,
         value_of_y_when_x_is_zero, direction_x, direction_y ) .equation_string ;
@@ -1171,4 +1181,23 @@ std::pair<float, float> Linear_equation::calculate_x_and_y_to_add_for_a_one_unit
 
     
     return x_and_y ;
+}
+
+
+
+
+
+
+void draw_map ( std :: vector < Attracting_element > elements_of_the_map )
+{
+    for ( int i = 0 ; i < elements_of_the_map .size () ; i ++ )
+    {
+        al_draw_line ( elements_of_the_map [ i ] .left_boundary_x,
+            elements_of_the_map [ i ] .left_boundary_y,
+            elements_of_the_map [ i ] .right_boundary_x,
+            elements_of_the_map [ i ] .right_boundary_y,
+            al_map_rgb_f ( 0.35, 0.35, 0.35 ), 3 ) ;
+    }
+    
+    return ;
 }

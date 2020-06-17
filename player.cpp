@@ -10,15 +10,18 @@
 
 using namespace std;
 
-Player::Player ( Attracting_element * element ) : x ( 600 ), y ( 800 ),
-is_in_jump ( false ), element_attracting_the_player ( element ),
+Player::Player ( vector < Attracting_element > list_of_elements_attracting_the_player ) : x ( 600 ), y ( 800 ),
+is_in_jump ( false ), list_of_elements_attracting_the_player ( list_of_elements_attracting_the_player ),
 gravity_changed ( false ), can_jump ( false ), done ( false ) {}
 
 
 void Player::move ()
 {
     
-    std::pair <float, float> direction_x_y = Player::get_direction_x_y () ;
+    std::pair <float, float> direction_x_y = 
+        list_of_elements_attracting_the_player [ 0 ]
+        .calculate_linear_equation ()
+        .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
     
     if ( key [ ALLEGRO_KEY_LEFT ] )
     {
@@ -38,43 +41,8 @@ void Player::move ()
         
 }
 
-std::pair <float, float> Player::get_direction_x_y ()
-{
-    
-    std::pair <float, float> direction_x_y ;
-    std::pair <float, float> ratios_reduced_for_directions ;
-    
-    ratios_reduced_for_directions .first = element_attracting_the_player -> x_ratio_for_one_y ;
-    ratios_reduced_for_directions .second = element_attracting_the_player -> y_ratio_for_one_x ;
-    
-    //cout << "Element ratio X for one Y: " << ratios_reduced_for_directions .first << endl ;
-    //cout << "Element ratio Y for one X: " << ratios_reduced_for_directions .second << endl ;
-    
-    if ( element_attracting_the_player -> x_ratio_for_one_y
-        > element_attracting_the_player -> y_ratio_for_one_x)
-    {
-        ratios_reduced_for_directions .first = 1 ;
-    }
-    
-    else if ( element_attracting_the_player -> x_ratio_for_one_y
-        < element_attracting_the_player -> y_ratio_for_one_x)
-    {
-        ratios_reduced_for_directions .second = 1 ;
-    }
-    
-    direction_x_y .first = 
-            ratios_reduced_for_directions .first *
-            element_attracting_the_player -> x_direction ;
-    
-    direction_x_y .second = 
-            ratios_reduced_for_directions .second *
-            element_attracting_the_player -> y_direction ;
-    
-    //cout << "Direction X: " << direction_x_y .first << endl ;
-    //cout << "Direction Y: " << direction_x_y .second << endl << endl ;
-    
-    return direction_x_y ;
-}
+
+
 
 void Player::jump ( ALLEGRO_TIMER * timer )
 {
@@ -82,7 +50,10 @@ void Player::jump ( ALLEGRO_TIMER * timer )
     int time_since_jump_instruction = al_get_timer_count ( timer ) -
         jump_timer ;
     
-    std::pair <int, int> direction_x_y = Player::get_direction_x_y () ;
+    std::pair <int, int> direction_x_y = 
+        list_of_elements_attracting_the_player [ 0 ]
+        .calculate_linear_equation ()
+        .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
 
     if ( is_in_jump )
     {
@@ -136,9 +107,6 @@ void Player::gravity ( std::vector<Attracting_element> elements )
     std::pair <float, float> speed_x_y = get_speed () ;
 
     //speed_x_y = smoothen_landing ( speed_x_y ) ;
-
-    //cout << "Speed X: " <<  speed_x_y .first << endl ;
-    //cout << "Speed Y: " <<  speed_x_y .second << endl ;
     
     x += speed_x_y .first ;
     y += speed_x_y .second ;
@@ -148,8 +116,8 @@ void Player::gravity ( std::vector<Attracting_element> elements )
 
 void Player::verify_if_player_can_jump ()
 {
-    if ( element_attracting_the_player ->
-        linear_equation .point_is_on_the_line ( x, y ) )
+    if ( list_of_elements_attracting_the_player [ 0 ]
+        .linear_equation .point_is_on_the_line ( x, y ) )
     {
         can_jump = true ;
     }
@@ -264,33 +232,16 @@ void Player::get_closest_element_from_the_list_of_elements (
         ) ;    
     }
     
+    list_of_elements_attracting_the_player .clear () ;
     
-    int index_of_new_attracting_element ;
-    
-    if ( index_of_elements_reached .size () == 2 )
+    for ( int i = 0 ; i < index_of_elements_reached .size () ; i ++ )
     {
-        for ( int i = 0 ; i < index_of_elements_reached .size () ; i ++ )
-        {
-            if ( list_of_attracting_elements [ index_of_elements_reached [ i ] ]
-                == *element_attracting_the_player )
-            {
-                if ( i == 1 )
-                {
-                    index_of_new_attracting_element = 0 ;
-                }
-                
-                if ( i == 0 )
-                {
-                    index_of_new_attracting_element = 1 ;
-                }
-            }
-        }
+        list_of_elements_attracting_the_player .push_back (
+            list_of_attracting_elements [ index_of_elements_reached [ i ] ] ) ;
     }
     
-    else index_of_new_attracting_element = index_of_elements_reached [ 0 ] ;
     
-    
-    
+    /*
     // PRINT ABOVE THE PLAYER
     std::ostringstream ss ;
     //ss << number_of_iterations ;
@@ -304,27 +255,74 @@ void Player::get_closest_element_from_the_list_of_elements (
     string indices ( ss .str () ) ;
     
     print_above_player ( indices ) ;
-    
-    
-    
-    
-    element_attracting_the_player = new Attracting_element (
-        list_of_attracting_elements [ index_of_new_attracting_element ] ) ;
-}
+    */
+    /*
+    list_of_elements_attracting_the_player [ 0 ] = *(new Attracting_element (
+        list_of_attracting_elements [ index_of_new_attracting_element ] ) ) ;
+*/}
 
 
 std::pair <float, float> Player::get_speed ()
-{ 
-    Linear_equation line_going_in_the_direction_of_the_element = 
-        element_attracting_the_player ->
-        calculate_line_going_in_the_direction_of_the_element ( x, y ) ;
+{
+    Linear_equation line_going_in_the_direction_of_the_element ;
     
-    std::pair < float, float > speed_x_y =
-        line_going_in_the_direction_of_the_element
-        .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
+    pair < float, float > speed_x_y_for_the_element ;
     
+    vector < float > list_of_speeds_x ;
+    vector < float > list_of_speeds_y ;
+        
+    // PRINT ABOVE THE PLAYER
+    std::ostringstream ss ;
+    for ( int i = 0 ; i < list_of_elements_attracting_the_player .size () ; i ++ )
+    {
+        line_going_in_the_direction_of_the_element = 
+            list_of_elements_attracting_the_player [ i ]
+            .calculate_line_going_in_the_direction_of_the_element ( x, y ) ;
+
+        speed_x_y_for_the_element = line_going_in_the_direction_of_the_element
+            .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
+        
+    
+        list_of_speeds_x .push_back ( speed_x_y_for_the_element .first ) ;
+        list_of_speeds_y .push_back ( speed_x_y_for_the_element .second ) ;
+    }
+    
+
+    
+    
+    pair < float, float > speed_x_y ;
+    
+    speed_x_y .first = std::accumulate (
+        list_of_speeds_x .begin (), list_of_speeds_x .end (), 0.0 ) ;
+    
+    speed_x_y .second = std::accumulate (
+        list_of_speeds_y .begin (), list_of_speeds_y .end (), 0.0 ) ;
+    
+    speed_x_y .first *= 2.5 ;
+    speed_x_y .second *= 2.5 ;
+    
+    ss << speed_x_y .first << " ; " << speed_x_y .second << " || " ;
+    string speed ( ss .str () ) ;
+    print_above_player ( speed ) ;
     return speed_x_y ;
 }
+
+
+
+std::pair < float, float >
+    Player::calculate_distance_between_the_player_and_the_first_attracting_element ()
+{
+    Linear_equation line_going_in_the_direction_of_the_first_attracting_element = 
+        list_of_elements_attracting_the_player [ 0 ]
+        .calculate_line_going_in_the_direction_of_the_element ( x, y ) ;
+
+    
+}
+
+
+
+
+
 
 std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> speed_x_y )
 {
@@ -401,8 +399,8 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
 
 std::pair<float, float> Player::get_player_ratio_depending_on_the_current_attracting_element ()
 {
-    float difference_between_x = abs ( x - element_attracting_the_player->left_boundary_x ) ;
-    float difference_between_y = abs ( y - element_attracting_the_player->left_boundary_y ) ;
+    float difference_between_x = abs ( x - list_of_elements_attracting_the_player [ 0 ] .left_boundary_x ) ;
+    float difference_between_y = abs ( y - list_of_elements_attracting_the_player [ 0 ] .left_boundary_y ) ;
     
     float x_ratio_for_one_y ;
     float y_ratio_for_one_x ;
