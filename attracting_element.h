@@ -42,6 +42,8 @@ public:
     
     float calculate_value_of_y_if_x_is_on_the_line ( float x ) ;
     
+    float calculate_value_of_x_if_y_is_on_the_line ( float y ) ;
+    
     Linear_equation calculate_line_going_in_the_opposite_direction () ;
 
     std::pair <float, float> calculate_x_and_y_to_add_for_a_one_unit_movement () ;
@@ -49,6 +51,10 @@ public:
 
 Linear_equation calculate_linear_equation_with_one_coordinate ( float x1, float y1,
     int direction_x, int direction_y, float number_of_y_for_one_x ) ;
+
+
+std :: pair < float, float > calculate_the_point_of_intersection (
+    Linear_equation linear_equation_1, Linear_equation linear_equation_2 ) ;
 
 std::ostream& operator<<(std::ostream &strm, const Linear_equation &linear_equation ) ;
 

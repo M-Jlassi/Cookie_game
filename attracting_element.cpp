@@ -761,6 +761,159 @@ Linear_equation calculate_linear_equation_with_one_coordinate ( float x1, float 
 }
 
 
+pair < float, float > calculate_the_point_of_intersection (
+    Linear_equation linear_equation_1, Linear_equation linear_equation_2 )
+{
+    /*
+     * The calculation of the point of intersection uses the following method:
+     * 
+     * 
+     * Definition:
+     * 
+     * linear_equation_1: Y = a_1 * X + b_1
+     * linear_equation_2: Y = a_2 * X + b_2
+     * 
+     * Where:
+     *  a_1 is named "linear_equation_1 .number_of_y_for_one_x"
+     *  a_2 is named "linear_equation_2 .number_of_y_for_one_x"
+     *  b_1 is named "linear_equation_1 .value_of_y_when_x_is_zero"
+     *  b_2 is named "linear_equation_2 .value_of_y_when_x_is_zero"
+     * 
+     * 
+     * Solving:
+     * 
+     * linear_equation_1 = linear_equation_2 ?
+     * 
+     * So we isolate X:
+     * 
+     * a_1 * X + b_1 = a_2 * X + b_2
+     * <=> a_1 * X = a_2 * X + b_2 - b_1
+     * <=> a_1 * X - a_2 * X = b_2 - b_1
+     * <=> ( a_1 - a_2 ) * X = b_2 - b_1
+     * <=> X = ( b_2 - b_1 ) / ( a_1 - a_2 )
+     */
+    
+    
+    float point_of_intersection_x ;
+    float point_of_intersection_y ;
+    
+    
+    if ( linear_equation_1 .direction_y == 0 ) // Horizontal
+    {
+        // Lines are perpendicular
+        
+        if ( linear_equation_2 .direction_x == 0 ) // Vertical
+        {
+            point_of_intersection_y = linear_equation_1 .value_of_y_when_x_is_zero ;
+            point_of_intersection_x = linear_equation_2 .value_of_y_when_x_is_zero ;
+        }
+        
+        // Lines are not perpendicular
+        
+        else
+        {
+            point_of_intersection_y = linear_equation_1 .value_of_y_when_x_is_zero ;
+            point_of_intersection_x = linear_equation_2 
+                .calculate_value_of_x_if_y_is_on_the_line ( point_of_intersection_y ) ;
+        }
+    }
+    
+    else if ( linear_equation_2 .direction_y == 0 ) // Horizontal
+    {
+        // Lines are perpendicular 
+        
+        if ( linear_equation_1 .direction_x == 0 ) // Vertical
+        {
+            point_of_intersection_y = linear_equation_2 .value_of_y_when_x_is_zero ;
+            point_of_intersection_x = linear_equation_1 .value_of_y_when_x_is_zero ;
+        }
+        
+        // Lines are not perpendicular
+        
+        else
+        {
+            point_of_intersection_y = linear_equation_2 .value_of_y_when_x_is_zero ;
+            point_of_intersection_x = linear_equation_1 
+                .calculate_value_of_x_if_y_is_on_the_line ( point_of_intersection_y ) ;
+        }
+    }
+    
+    else
+    {
+        float number_of_y_for_one_x_oriented_1 ;
+
+        // Slope going upward
+
+        if ( linear_equation_1 .direction_x == (-1) * linear_equation_1 .direction_y )
+        {
+            number_of_y_for_one_x_oriented_1 =
+                ( - 1 ) * linear_equation_1 .number_of_y_for_one_x ;
+        }
+
+        // Slope going downward
+        
+        else if ( linear_equation_1 .direction_x == linear_equation_1 .direction_y )
+        {
+            number_of_y_for_one_x_oriented_1 =
+                linear_equation_1 .number_of_y_for_one_x ;
+        }
+
+        // Vertical
+        
+        else if ( linear_equation_1 .direction_x == 0 )
+        {
+            number_of_y_for_one_x_oriented_1 = 0 ;
+        }
+
+
+        float number_of_y_for_one_x_oriented_2 ;
+
+        // Slope going upward
+
+        if ( linear_equation_2 .direction_x == (-1) * linear_equation_2 .direction_y )
+        {
+            number_of_y_for_one_x_oriented_2 =
+                ( - 1 ) * linear_equation_2 .number_of_y_for_one_x ;
+        }
+
+        // Slope going downward
+        
+        else if ( linear_equation_2 .direction_x == linear_equation_2 .direction_y )
+        {
+            number_of_y_for_one_x_oriented_2 =
+                linear_equation_2 .number_of_y_for_one_x ;
+        }
+
+        // Vertical
+        
+        else if ( linear_equation_2 .direction_x == 0 )
+        {
+            number_of_y_for_one_x_oriented_2 = 0 ;
+        }
+
+
+        point_of_intersection_x =
+            ( linear_equation_2 .value_of_y_when_x_is_zero
+            - linear_equation_1 .value_of_y_when_x_is_zero )
+            / ( number_of_y_for_one_x_oriented_1
+            - number_of_y_for_one_x_oriented_2 ) ;
+        
+        point_of_intersection_y = linear_equation_1
+            .calculate_value_of_y_if_x_is_on_the_line ( point_of_intersection_x ) ;
+    }
+    
+    
+    
+    pair < float, float > point_of_intersection ;
+    
+    point_of_intersection .first = point_of_intersection_x ;
+    point_of_intersection .second = point_of_intersection_y ;
+    
+    
+    return point_of_intersection ;
+}
+
+
 
 std::ostream& operator<<( std::ostream &strm, const Linear_equation &linear_equation )
 {
@@ -1069,8 +1222,53 @@ float Linear_equation::calculate_value_of_y_if_x_is_on_the_line ( float x )
             + value_of_y_when_x_is_zero ;
     }
     
+    // Horizontal
+    
+    else if ( direction_y == 0 )
+    {
+        value_of_y_if_x_is_on_the_line = value_of_y_when_x_is_zero ;
+    }
+    
+    // Vertical: any value of Y can be chosen
+    
+    else if ( direction_x == 0 )
+    {
+        value_of_y_if_x_is_on_the_line = 0 ;
+    }
+    
     
     return value_of_y_if_x_is_on_the_line ;
+}
+
+
+float Linear_equation :: calculate_value_of_x_if_y_is_on_the_line ( float y )
+{    
+    /*
+     * The linear equation is in the form Y = a * X + b
+     *  Where a is "number_of_y_for_one_x" and b is "value_of_y_when_x_is_zero"
+     * 
+     * We find X by doing the following:
+     *  Y - b = a * X
+     *  <=> X = ( Y - b ) / a 
+     */
+    
+    float number_of_y_for_one_x_oriented ;
+    
+    if ( direction_x == direction_y )
+    {
+        number_of_y_for_one_x_oriented = number_of_y_for_one_x ;
+    }
+    
+    if ( direction_x == ( -1 ) * direction_y )
+    {
+        number_of_y_for_one_x_oriented = ( -1 ) * number_of_y_for_one_x ;
+    }
+    
+    float value_of_x_if_y_is_on_the_line = 
+        ( y - value_of_y_when_x_is_zero )
+        / number_of_y_for_one_x_oriented ;
+    
+    return value_of_x_if_y_is_on_the_line ;
 }
 
 

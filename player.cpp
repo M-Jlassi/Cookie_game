@@ -105,8 +105,6 @@ void Player::gravity ( std::vector<Attracting_element> elements )
     get_closest_element_from_the_list_of_elements ( elements ) ;
 
     std::pair <float, float> speed_x_y = get_speed () ;
-
-    //speed_x_y = smoothen_landing ( speed_x_y ) ;
     
     x += speed_x_y .first ;
     y += speed_x_y .second ;
@@ -271,8 +269,6 @@ std::pair <float, float> Player::get_speed ()
     vector < float > list_of_speeds_x ;
     vector < float > list_of_speeds_y ;
         
-    // PRINT ABOVE THE PLAYER
-    std::ostringstream ss ;
     for ( int i = 0 ; i < list_of_elements_attracting_the_player .size () ; i ++ )
     {
         line_going_in_the_direction_of_the_element = 
@@ -295,15 +291,23 @@ std::pair <float, float> Player::get_speed ()
     speed_x_y .first = std::accumulate (
         list_of_speeds_x .begin (), list_of_speeds_x .end (), 0.0 ) ;
     
+    speed_x_y .first /= list_of_speeds_x .size () ;
+    
+    
     speed_x_y .second = std::accumulate (
         list_of_speeds_y .begin (), list_of_speeds_y .end (), 0.0 ) ;
     
-    speed_x_y .first *= 2.5 ;
-    speed_x_y .second *= 2.5 ;
+    speed_x_y .second /= list_of_speeds_y .size () ;
     
-    ss << speed_x_y .first << " ; " << speed_x_y .second << " || " ;
-    string speed ( ss .str () ) ;
-    print_above_player ( speed ) ;
+    
+    speed_x_y .first *= 5 ;
+    speed_x_y .second *= 5 ;
+    
+    
+    speed_x_y = smoothen_landing ( speed_x_y ) ;
+    
+    
+    
     return speed_x_y ;
 }
 
@@ -316,7 +320,31 @@ std::pair < float, float >
         list_of_elements_attracting_the_player [ 0 ]
         .calculate_line_going_in_the_direction_of_the_element ( x, y ) ;
 
+    pair < float, float > point_on_the_element = 
+        calculate_the_point_of_intersection (
+            list_of_elements_attracting_the_player [ 0 ] .linear_equation,
+            line_going_in_the_direction_of_the_first_attracting_element
+        ) ;
     
+    pair < float, float > distance_between_the_player_and_the_element ;
+    
+    distance_between_the_player_and_the_element .first =
+        x - point_on_the_element .first ;
+    
+    distance_between_the_player_and_the_element .second =
+        y - point_on_the_element .second ;
+    
+    // PRINT ABOVE THE PLAYER
+    std::ostringstream ss ;
+    ss << distance_between_the_player_and_the_element .first << " | " ;
+    ss << distance_between_the_player_and_the_element .second ;
+    string text ( ss .str () ) ;
+    print_above_player ( text ) ;
+    
+    al_draw_filled_circle ( point_on_the_element .first, point_on_the_element .second, 5,
+                al_map_rgb_f ( 1, 0.3, 0.7 ) ) ;
+    
+    return distance_between_the_player_and_the_element ;
 }
 
 
@@ -326,70 +354,23 @@ std::pair < float, float >
 
 std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> speed_x_y )
 {
-    /*
-    std::pair <float, float> player_ratios_current = get_player_ratio_depending_on_the_current_attracting_element () ;
-    std::pair <float, float> player_ratios_after = calculate_ratios (
-        element_attracting_the_player->left_boundary_x,
-        element_attracting_the_player->left_boundary_y,
-        x + speed_x_y .first,
-        y + speed_x_y .second
-    ) ;
+    pair < float, float > distance_x_y_between_the_player_and_the_element =
+        calculate_distance_between_the_player_and_the_first_attracting_element () ;
 
-     * /    
-    /*
-    if ( ( speed_x_y .first > 0  &&
-            x + speed_x_y .first > element_attracting_the_player -> left_boundary_x )
-        || ( speed_x_y .first < 0  &&
-            x + speed_x_y .first < element_attracting_the_player -> right_boundary_x ) )
+    if ( abs ( speed_x_y .first ) >
+        ( distance_x_y_between_the_player_and_the_element .first ) )
     {
-        speed_x_y .first /= 2 ;
-    }
-
-    if ( ( speed_x_y .second > 0  &&
-            y + speed_x_y .second > element_attracting_the_player -> right_boundary_y )
-        || ( speed_x_y .second < 0  &&
-            y + speed_x_y .second < element_attracting_the_player -> left_boundary_y ) )
-    {
-        speed_x_y .second /= 2 ;
-    }*/
-   /* 
-    float difference_between_lowest_ratios_current ;
-    float difference_between_lowest_ratios_after ;
-    
-    if ( player_ratios_current .first <= player_ratios_current .second )
-    {
-        //cout << "Player X ratio for one Y: " << player_ratios .first << endl ;
-        //cout << "Element X ratio for one Y: " << element_attracting_the_player -> x_ratio_for_one_y << endl ;
-        difference_between_lowest_ratios_current = abs (
-                player_ratios_current .first - element_attracting_the_player -> x_ratio_for_one_y
-        ) ;
-        difference_between_lowest_ratios_after = abs (
-                player_ratios_after .first - element_attracting_the_player -> x_ratio_for_one_y
-        ) ;
+        speed_x_y .first =
+            distance_x_y_between_the_player_and_the_element .first ;
     }
     
-    else if ( player_ratios_current .first > player_ratios_current .second )
+    if ( abs ( speed_x_y .second ) >
+         abs ( distance_x_y_between_the_player_and_the_element .second ) )
     {
-        //cout << "Player Y ratio for one X: " << player_ratios .second << endl ;
-        //cout << "Element Y ratio for one X: " << element_attracting_the_player -> y_ratio_for_one_x << endl ;
-        difference_between_lowest_ratios_current = abs (
-                player_ratios_current .second - element_attracting_the_player -> y_ratio_for_one_x
-        ) ;
-        difference_between_lowest_ratios_after = abs (
-                player_ratios_after .second - element_attracting_the_player -> y_ratio_for_one_x
-        ) ;
-    }*/
-    /*
-    if ( difference_between_lowest_ratios_after > difference_between_lowest_ratios_current )
-    {
-        cout << difference_between_lowest_ratios_current << endl ;
-        cout << difference_between_lowest_ratios_after << endl << endl ;
+        speed_x_y .second =
+            distance_x_y_between_the_player_and_the_element .second ;
     }
-    */
-    //cout << "Difference between lowest ratios: " << difference_between_lowest_ratios << endl << endl ;
     
-    
-
     return speed_x_y ;
 }
 
