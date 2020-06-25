@@ -104,7 +104,8 @@ void Player::gravity ( std::vector<Attracting_element> elements )
 
     get_closest_element_from_the_list_of_elements ( elements ) ;
 
-    std::pair <float, float> speed_x_y = get_speed () ;
+    std::pair <float, float> speed_x_y = get_speed () ;    
+
     
     x += speed_x_y .first ;
     y += speed_x_y .second ;
@@ -117,8 +118,11 @@ void Player::verify_if_player_can_jump ()
     if ( list_of_elements_attracting_the_player [ 0 ]
         .linear_equation .point_is_on_the_line ( x, y ) )
     {
+        
         can_jump = true ;
     }
+    
+    
 }
 
 
@@ -334,15 +338,8 @@ std::pair < float, float >
     distance_between_the_player_and_the_element .second =
         y - point_on_the_element .second ;
     
-    // PRINT ABOVE THE PLAYER
-    std::ostringstream ss ;
-    ss << distance_between_the_player_and_the_element .first << " | " ;
-    ss << distance_between_the_player_and_the_element .second ;
-    string text ( ss .str () ) ;
-    print_above_player ( text ) ;
-    
-    al_draw_filled_circle ( point_on_the_element .first, point_on_the_element .second, 5,
-                al_map_rgb_f ( 1, 0.3, 0.7 ) ) ;
+    al_draw_filled_circle ( point_on_the_element .first, point_on_the_element .second, 3,
+                al_map_rgb_f ( 1, 0.8, 0.5 ) ) ;
     
     return distance_between_the_player_and_the_element ;
 }
@@ -357,9 +354,16 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
     pair < float, float > distance_x_y_between_the_player_and_the_element =
         calculate_distance_between_the_player_and_the_first_attracting_element () ;
 
+    
+    std::ostringstream ss ;
+    ss << distance_x_y_between_the_player_and_the_element .first << " | " ;
+    ss << distance_x_y_between_the_player_and_the_element .second ;
+    string text ( ss .str () ) ;
+    print_above_player ( text ) ;
+    
     if ( abs ( speed_x_y .first ) >
-        ( distance_x_y_between_the_player_and_the_element .first ) )
-    {
+        abs ( distance_x_y_between_the_player_and_the_element .first ) )
+    {        
         speed_x_y .first =
             distance_x_y_between_the_player_and_the_element .first ;
     }

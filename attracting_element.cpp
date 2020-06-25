@@ -175,11 +175,15 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
 {
     Linear_equation line_going_in_the_direction_of_the_element = Linear_equation () ;
     
-    // Verify if the player touches the element
+    // If the player touches the element: return a perpendicular going below the element
 
     if ( linear_equation .point_is_on_the_line ( x, y ) )
     {
-        return Linear_equation () ;
+        line_going_in_the_direction_of_the_element = 
+            calculate_perpendicular_linear_equation ( x, y,
+            left_boundary_x, left_boundary_y ) ;
+        
+        return line_going_in_the_direction_of_the_element ;
     }
 
     /*

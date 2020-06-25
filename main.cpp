@@ -82,20 +82,6 @@ std::pair <float, float> calculate_ratios ( float x1, float x2, float y1, float 
     return ratios ;
 }*/
 
-void print_above_player ( Player player, string text )
-{
-    int length_of_string = text .length () ;
-    
-    char char_array [ length_of_string + 1 ] ;
-    
-    strcpy ( char_array, text .c_str () ) ;
-    
-    ALLEGRO_FONT* font = al_create_builtin_font();
-    
-    al_draw_text ( font, al_map_rgb ( 255, 255, 255 ),
-        player .x, player .y - 50, ALLEGRO_ALIGN_CENTER, char_array ) ;
-}
-
 
 
 
@@ -312,6 +298,16 @@ int main(int argc, char** argv)
     elements .push_back ( little_ceiling ) ;
     elements .push_back ( top_left_corner ) ;
     
+    /*Attracting_element a ( 500, 500, 1000, 500 ) ;
+    Attracting_element b ( 900, 400, 900, 1000 ) ;
+    
+    elements .push_back ( a ) ;
+    elements .push_back ( b ) ;
+    
+    pair < float, float > point_on_the_element = calculate_the_point_of_intersection (
+        b .linear_equation, a .linear_equation ) ;
+    */
+    
     
     /*
     cout << "floor: " << floor << endl ;
@@ -339,8 +335,16 @@ int main(int argc, char** argv)
         
         draw_map ( elements ) ;
         
+    // PRINT ABOVE THE PLAYER
+    /*std::ostringstream ss ;
+    ss << point_on_the_element .first << " | " ;
+    ss << point_on_the_element .second ;
+    string text ( ss .str () ) ;
+    player .print_above_player ( text ) ;
+    
+        al_draw_filled_circle ( point_on_the_element .first, point_on_the_element .second, 3, al_map_rgb_f ( 1, 0, 1 ) ) ;
+     * */
         al_wait_for_event ( event_queue, &event ) ;
-        
         
         switch ( event .type )
         {
@@ -415,14 +419,14 @@ int main(int argc, char** argv)
         
         // Draw elements attracting the player
         
-        for ( int i = 0 ; i < player .list_of_elements_attracting_the_player .size () ; i ++ )
+        /*for ( int i = 0 ; i < player .list_of_elements_attracting_the_player .size () ; i ++ )
         {
             al_draw_line ( player .list_of_elements_attracting_the_player [ i ] .left_boundary_x,
                 player .list_of_elements_attracting_the_player [ i ] .left_boundary_y,
                 player .list_of_elements_attracting_the_player [ i ] .right_boundary_x,
                 player .list_of_elements_attracting_the_player [ i ] .right_boundary_y,
                 al_map_rgb_f ( 1, 1, 1 ), 1 ) ;
-        }
+        }*/
         
         
         
