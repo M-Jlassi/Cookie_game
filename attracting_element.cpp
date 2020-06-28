@@ -197,9 +197,9 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
      */
 
 
-    // Player is above the element?
+    // Player is above the element
 
-    if ( linear_equation .point_is_to_the_left_of_the_line ( x, y ) )
+    else if ( linear_equation .point_is_to_the_left_of_the_line ( x, y ) )
     {        
         Linear_equation left_boundary_perpendicular_to_the_attracting_element =
             calculate_perpendicular_linear_equation (
@@ -292,10 +292,101 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
             }
         }
     }
+    
+    // Player is below the element: same as above, with inverted boundaries
 
     else
     {
-        return Linear_equation () ;
+        Linear_equation left_boundary_perpendicular_to_the_reversed_attracting_element =
+            calculate_perpendicular_linear_equation (
+                right_boundary_x,
+                right_boundary_y,
+                left_boundary_x,
+                left_boundary_y
+            ) ;
+
+        if ( left_boundary_perpendicular_to_the_reversed_attracting_element
+            .point_is_on_the_line ( x, y ) )
+        {
+            // Reverse perpendicular until get to the element
+
+            line_going_in_the_direction_of_the_element =
+                left_boundary_perpendicular_to_the_reversed_attracting_element 
+                .calculate_line_going_in_the_opposite_direction () ;
+        }
+
+        else if ( left_boundary_perpendicular_to_the_reversed_attracting_element
+            .point_is_to_the_left_of_the_line (x, y ) )
+        {
+            // Linear_equation from the player to the right boundary position of the element
+
+            line_going_in_the_direction_of_the_element = calculate_linear_equation_of_element (
+                x, y,
+                right_boundary_x,
+                right_boundary_y
+            ) ;
+        }
+
+        // Player is to the right of the left perpendicular
+
+        else
+        {
+            float x_left_boundary_if_line_continues =
+                left_boundary_x
+                + ( ( -1 ) * linear_equation .direction_x * 1 ) ;
+
+            float y_left_boundary_if_line_continues =
+                left_boundary_y
+                + ( ( -1 ) * linear_equation .direction_y
+                * linear_equation .number_of_y_for_one_x ) ;
+
+            Linear_equation right_boundary_perpendicular_to_the_reversed_attracting_element =
+                calculate_perpendicular_linear_equation (
+                    left_boundary_x,
+                    left_boundary_y,
+                    x_left_boundary_if_line_continues,
+                    y_left_boundary_if_line_continues
+                ) ;
+
+            Linear_equation line_going_in_the_opposite_direction =
+                right_boundary_perpendicular_to_the_reversed_attracting_element
+                .calculate_line_going_in_the_opposite_direction () ;
+
+            // The player is below the element, between the boundaries
+
+            if ( right_boundary_perpendicular_to_the_reversed_attracting_element
+                .point_is_to_the_left_of_the_line ( x, y ) )
+            {
+                line_going_in_the_direction_of_the_element =
+                    calculate_linear_equation_with_one_coordinate (
+                        x, y,
+                        line_going_in_the_opposite_direction .direction_x,
+                        line_going_in_the_opposite_direction .direction_y,
+                        line_going_in_the_opposite_direction .number_of_y_for_one_x
+                    ) ;
+            }
+
+            // The player is on the right boundary perpendicular
+
+            else if ( right_boundary_perpendicular_to_the_reversed_attracting_element
+                .point_is_on_the_line ( x, y ) )
+            {                
+                line_going_in_the_direction_of_the_element =
+                    line_going_in_the_opposite_direction ;
+            }
+
+            // The player is to the left of the element
+
+            else
+            {
+                line_going_in_the_direction_of_the_element =
+                    calculate_linear_equation_of_element (
+                        x, y,
+                        left_boundary_x,
+                        left_boundary_y
+                    ) ;
+            }
+        }
     }
     
     
@@ -768,36 +859,6 @@ Linear_equation calculate_linear_equation_with_one_coordinate ( float x1, float 
 pair < float, float > calculate_the_point_of_intersection (
     Linear_equation linear_equation_1, Linear_equation linear_equation_2 )
 {
-    /*
-     * The calculation of the point of intersection uses the following method:
-     * 
-     * 
-     * Definition:
-     * 
-     * linear_equation_1: Y = a_1 * X + b_1
-     * linear_equation_2: Y = a_2 * X + b_2
-     * 
-     * Where:
-     *  a_1 is named "linear_equation_1 .number_of_y_for_one_x"
-     *  a_2 is named "linear_equation_2 .number_of_y_for_one_x"
-     *  b_1 is named "linear_equation_1 .value_of_y_when_x_is_zero"
-     *  b_2 is named "linear_equation_2 .value_of_y_when_x_is_zero"
-     * 
-     * 
-     * Solving:
-     * 
-     * linear_equation_1 = linear_equation_2 ?
-     * 
-     * So we isolate X:
-     * 
-     * a_1 * X + b_1 = a_2 * X + b_2
-     * <=> a_1 * X = a_2 * X + b_2 - b_1
-     * <=> a_1 * X - a_2 * X = b_2 - b_1
-     * <=> ( a_1 - a_2 ) * X = b_2 - b_1
-     * <=> X = ( b_2 - b_1 ) / ( a_1 - a_2 )
-     */
-    
-    
     float point_of_intersection_x ;
     float point_of_intersection_y ;
     
@@ -841,6 +902,35 @@ pair < float, float > calculate_the_point_of_intersection (
                 .calculate_value_of_x_if_y_is_on_the_line ( point_of_intersection_y ) ;
         }
     }
+    
+    /*
+     * The calculation of the point of intersection uses the following method:
+     * 
+     * 
+     * Definition:
+     * 
+     * linear_equation_1: Y = a_1 * X + b_1
+     * linear_equation_2: Y = a_2 * X + b_2
+     * 
+     * Where:
+     *  a_1 is named "linear_equation_1 .number_of_y_for_one_x"
+     *  a_2 is named "linear_equation_2 .number_of_y_for_one_x"
+     *  b_1 is named "linear_equation_1 .value_of_y_when_x_is_zero"
+     *  b_2 is named "linear_equation_2 .value_of_y_when_x_is_zero"
+     * 
+     * 
+     * Solving:
+     * 
+     * linear_equation_1 = linear_equation_2 ?
+     * 
+     * So we isolate X:
+     * 
+     * a_1 * X + b_1 = a_2 * X + b_2
+     * <=> a_1 * X = a_2 * X + b_2 - b_1
+     * <=> a_1 * X - a_2 * X = b_2 - b_1
+     * <=> ( a_1 - a_2 ) * X = b_2 - b_1
+     * <=> X = ( b_2 - b_1 ) / ( a_1 - a_2 )
+     */
     
     else
     {

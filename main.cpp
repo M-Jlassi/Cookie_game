@@ -50,52 +50,6 @@ std::ostream& operator<<(std::ostream &strm, const Player &player)
 
     return strm << description_of_element << endl ;
 }
-/*
-std::pair <float, float> calculate_ratios ( float x1, float x2, float y1, float y2 )
-{
-    // First is x_ratio_for_one_y
-    // Second is y_ratio_for_one_x
-    
-    std::pair <float, float> ratios ;
-    
-    float difference_between_x = abs ( x2 - x1 ) ;
-    float difference_between_y = abs ( y2 - y1 ) ;
-    
-    if ( difference_between_x == 0 )
-    {
-        ratios .first = 0 ;
-        ratios .second = 1 ;
-    }
-    
-    else if ( difference_between_y == 0 )
-    {
-        ratios .first = 1 ;
-        ratios .second = 0 ;
-    }
-    
-    else
-    {
-        ratios .first = difference_between_x / difference_between_y ;
-        ratios .second = difference_between_y / difference_between_x ;
-    }
-    
-    return ratios ;
-}*/
-
-
-
-
-
-/*
-void elements_init ()
-{
-    for ( int i = 0 ; i < NUMBER_OF_ELEMENTS ; i++ )
-    {
-        elements [ i ] .
-    }
-}
-*/
-
 
 
 
@@ -107,7 +61,7 @@ int main(int argc, char** argv)
     must_init ( al_init (), "allegro" ) ;
     must_init ( al_install_keyboard (), "keyboard" ) ;
     
-    ALLEGRO_TIMER * timer = al_create_timer ( 1.0 / 30.0 ) ;
+    ALLEGRO_TIMER * timer = al_create_timer ( 1.0 / 2.0 ) ;
     must_init ( timer, "timer" ) ;
     
     ALLEGRO_EVENT_QUEUE * event_queue = al_create_event_queue () ;
@@ -394,8 +348,8 @@ int main(int argc, char** argv)
         ) ;
         
         // Left wall
-        al_draw_filled_rectangle ( 0, 0, 100, 900,
-                al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
+        //al_draw_filled_rectangle ( 0, 0, 100, 900,
+          //      al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
         
         // Right wall
         al_draw_filled_rectangle ( 1100, 0, 1200, 900,

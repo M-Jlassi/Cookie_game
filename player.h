@@ -59,21 +59,13 @@ public :
 
     void verify_if_player_can_jump () ;
     
-    void get_closest_element ( std::vector<Attracting_element> elements ) ;
-    
-    void get_closest_element_from_the_list ( std::vector < Attracting_element > attracting_elements ) ;
-    
-    void get_closest_element_from_the_list_of_elements ( std::vector < Attracting_element > list_of_attracting_elements ) ;
+    void get_closest_elements ( std::vector < Attracting_element > list_of_attracting_elements ) ;
     
     std::pair <float, float> get_speed () ;
     
     std::pair < float, float > calculate_distance_between_the_player_and_the_first_attracting_element () ;
     
     std::pair <float, float> smoothen_landing ( std::pair <float, float> speed_x_y ) ;
-    
-    std::pair<float, float> get_player_ratio_depending_on_the_current_attracting_element () ;
-    
-    int calculate_number_of_one_unit_iterations_between_player_and_attracting_element ( Attracting_element attracting_element ) ;
     
     void print_above_player ( std::string text ) ;
 } ;

@@ -102,7 +102,7 @@ void Player::gravity ( std::vector<Attracting_element> elements )
 
     verify_if_player_can_jump () ;
 
-    get_closest_element_from_the_list_of_elements ( elements ) ;
+    get_closest_elements ( elements ) ;
 
     std::pair <float, float> speed_x_y = get_speed () ;    
 
@@ -129,7 +129,7 @@ void Player::verify_if_player_can_jump ()
 
 
 
-void Player::get_closest_element_from_the_list_of_elements (
+void Player::get_closest_elements (
     std::vector < Attracting_element > list_of_attracting_elements )
 {
     pair <float, float> test_coordinates_from_player_position ;
@@ -335,13 +335,21 @@ std::pair < float, float >
     distance_between_the_player_and_the_element .first =
         x - point_on_the_element .first ;
     
+    std::ostringstream ss ;
+    ss << point_on_the_element .second << " | " ;
+    ss << y << " || " ;
+    ss << can_jump << " [[[";
+    ss << distance_between_the_player_and_the_element .second ;
+    string text ( ss .str () ) ;
+    print_above_player ( text ) ;
+    
     distance_between_the_player_and_the_element .second =
         y - point_on_the_element .second ;
     
     al_draw_filled_circle ( point_on_the_element .first, point_on_the_element .second, 3,
                 al_map_rgb_f ( 1, 0.8, 0.5 ) ) ;
-    
-    return distance_between_the_player_and_the_element ;
+    return point_on_the_element ;
+    //return distance_between_the_player_and_the_element ;
 }
 
 
@@ -355,267 +363,35 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
         calculate_distance_between_the_player_and_the_first_attracting_element () ;
 
     
-    std::ostringstream ss ;
-    ss << distance_x_y_between_the_player_and_the_element .first << " | " ;
-    ss << distance_x_y_between_the_player_and_the_element .second ;
-    string text ( ss .str () ) ;
-    print_above_player ( text ) ;
     
     if ( abs ( speed_x_y .first ) >
         abs ( distance_x_y_between_the_player_and_the_element .first ) )
-    {        
-        speed_x_y .first =
-            distance_x_y_between_the_player_and_the_element .first ;
+    {
+        //x = distance_x_y_between_the_player_and_the_element .first ;
+        //speed_x_y .first = 0 ;
+        /*if ( abs ( distance_x_y_between_the_player_and_the_element .first ) > 1 )
+        {
+            speed_x_y .first =
+                distance_x_y_between_the_player_and_the_element .first ;
+        }
+        else speed_x_y .first = 0 ;*/
     }
     
     if ( abs ( speed_x_y .second ) >
          abs ( distance_x_y_between_the_player_and_the_element .second ) )
     {
-        speed_x_y .second =
-            distance_x_y_between_the_player_and_the_element .second ;
+        //y = distance_x_y_between_the_player_and_the_element .second ;
+        //speed_x_y .second = 0 ;
+        /*if ( abs ( distance_x_y_between_the_player_and_the_element .second ) > 1 )
+        {
+            speed_x_y .second =
+                distance_x_y_between_the_player_and_the_element .second ;
+        }
+        //else speed_x_y .second = 0 ;*/
     }
+    
     
     return speed_x_y ;
-}
-
-
-
-
-
-std::pair<float, float> Player::get_player_ratio_depending_on_the_current_attracting_element ()
-{
-    float difference_between_x = abs ( x - list_of_elements_attracting_the_player [ 0 ] .left_boundary_x ) ;
-    float difference_between_y = abs ( y - list_of_elements_attracting_the_player [ 0 ] .left_boundary_y ) ;
-    
-    float x_ratio_for_one_y ;
-    float y_ratio_for_one_x ;
-    
-    if ( difference_between_x == 0 )
-    {
-        x_ratio_for_one_y = 0 ;
-        y_ratio_for_one_x = 1 ;
-    }
-    
-    else if ( difference_between_y == 0 )
-    {
-        x_ratio_for_one_y = 1 ;
-        y_ratio_for_one_x = 0 ;
-    }
-    
-    else
-    {
-        x_ratio_for_one_y = difference_between_x / difference_between_y ;
-        y_ratio_for_one_x = difference_between_y / difference_between_x ;
-    }
-    /*
-    cout << "Ratio element X: " << element_attracting_the_player -> x_ratio_for_one_y << endl ;
-    cout << "Ratio element Y: " << element_attracting_the_player -> y_ratio_for_one_x << endl ;
-    cout << "Ratio player X: " << x_ratio_for_one_y << endl ;
-    cout << "Ratio player Y: " << y_ratio_for_one_x << endl << endl << endl ;
-    */
-    
-    std::pair <float, float> player_ratios_x_y = std::pair<float, float> ( x_ratio_for_one_y, y_ratio_for_one_x ) ;
-    
-    return player_ratios_x_y ;
-}
-
-
-
-    
-float calculate_ratio ( float x_static, float y_static,
-    float x_moving, float y_moving )
-{
-    
-    float moving_part = x_moving + y_moving ;
-    
-    float static_part = x_static + y_static ;
-    
-    cout << "Calculating ratio: " << moving_part << " / " << static_part << endl ;
-    
-    float ratio = moving_part / static_part ;
-    
-    return ratio ;
-}
-
-
-
-
-
-
-int Player::calculate_number_of_one_unit_iterations_between_player_and_attracting_element ( Attracting_element attracting_element )
-{    
-    std::pair <float, float> test_coordinates_from_player_position ;
-    test_coordinates_from_player_position .first = x ;
-    test_coordinates_from_player_position .second = y ;
-    
-    Linear_equation linear_equation_of_the_attracting_element =
-        calculate_linear_equation_of_element (
-            attracting_element .left_boundary_x,
-            attracting_element .left_boundary_y,
-            attracting_element .right_boundary_x,
-            attracting_element .right_boundary_y
-        ) ;
-    
-    
-    // Verify if the player touches the element
-    
-    if ( linear_equation_of_the_attracting_element .point_is_on_the_line ( x, y ) )
-    {
-        return 0 ;
-    }
-    
-    /*
-     * Verify if the player is above the element
-     * 
-     * If so, locate whether the player is:
-     *  Directly above: the closest way to the element will be the perpendicular to this element
-     *  To the left: the closest way to the element will be in the direction of the left boundary
-     *  To the right: the closest way to the element will be in the direction of the right boundary
-     * 
-     */
-    
-    Linear_equation line_going_to_the_element ;
-            
-    // Player is above the element?
-    
-    if ( linear_equation_of_the_attracting_element
-        .point_is_to_the_left_of_the_line ( x, y ) )
-    {        
-        Linear_equation left_boundary_perpendicular_to_the_attracting_element =
-            calculate_perpendicular_linear_equation (
-                attracting_element .left_boundary_x,
-                attracting_element .left_boundary_y,
-                attracting_element .right_boundary_x,
-                attracting_element .right_boundary_y
-            ) ;
-        
-        if ( left_boundary_perpendicular_to_the_attracting_element
-            .point_is_on_the_line ( x, y ) )
-        {
-            // Reverse perpendicular until get to the element
-            
-            line_going_to_the_element =
-                left_boundary_perpendicular_to_the_attracting_element 
-                .calculate_line_going_in_the_opposite_direction () ;
-        }
-        
-        else if ( left_boundary_perpendicular_to_the_attracting_element
-            .point_is_to_the_left_of_the_line (x, y ) )
-        {
-            // Linear_equation from the player to the left boundary position of the element
-            
-            line_going_to_the_element = calculate_linear_equation_of_element (
-                x, y,
-                attracting_element .left_boundary_x,
-                attracting_element .left_boundary_y
-            ) ;
-        }
-        
-        // Player is to the right of the left perpendicular
-        
-        else
-        {
-            float x_right_boundary_if_line_continues =
-                attracting_element .right_boundary_x
-                + ( linear_equation_of_the_attracting_element .direction_x * 1 ) ;
-            
-            float y_right_boundary_if_line_continues =
-                attracting_element .right_boundary_y
-                + ( linear_equation_of_the_attracting_element .direction_y
-                * linear_equation_of_the_attracting_element .number_of_y_for_one_x ) ;
-            
-            Linear_equation right_boundary_perpendicular_to_the_attracting_element =
-                calculate_perpendicular_linear_equation (
-                    attracting_element .right_boundary_x,
-                    attracting_element .right_boundary_y,
-                    x_right_boundary_if_line_continues,
-                    y_right_boundary_if_line_continues
-                ) ;
-            
-            Linear_equation line_going_in_the_opposite_direction =
-                right_boundary_perpendicular_to_the_attracting_element
-                .calculate_line_going_in_the_opposite_direction () ;
-            
-            // The player is just above the element
-            
-            if ( right_boundary_perpendicular_to_the_attracting_element
-                .point_is_to_the_left_of_the_line ( x, y ) )
-            {
-                line_going_to_the_element =
-                    calculate_linear_equation_with_one_coordinate (
-                        x, y,
-                        line_going_in_the_opposite_direction .direction_x,
-                        line_going_in_the_opposite_direction .direction_y,
-                        line_going_in_the_opposite_direction .number_of_y_for_one_x
-                    ) ;
-            }
-            
-            // The player is on the right boundary perpendicular
-            
-            else if ( right_boundary_perpendicular_to_the_attracting_element
-                .point_is_on_the_line ( x, y ) )
-            {                
-                line_going_to_the_element = line_going_in_the_opposite_direction ;
-            }
-            
-            // The player is to the right of the element
-            
-            else
-            {
-                line_going_to_the_element = calculate_linear_equation_of_element (
-                    x, y,
-                    attracting_element .right_boundary_x,
-                    attracting_element .right_boundary_y
-                ) ;
-            }
-        }
-    }
-    
-    else
-    {
-        return -1 ;
-    }
-    
-    pair <float, float> x_and_y_to_add_for_a_one_unit_movement =
-        line_going_to_the_element .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
-    
-    /*
-     * PRINT ABOVE THE PLAYER
-    std::ostringstream ss ;
-    ss << x_and_y_to_add_for_a_one_unit_movement .first << " ; " ;
-    ss << x_and_y_to_add_for_a_one_unit_movement .second ;
-    string display_x_and_y ( ss .str () ) ;
-    
-    print_above_player (player, display_x_and_y ) ;
-    */
-    
-    bool has_reached_the_element = false ;
-    int number_of_iterations = 0 ;
-    
-    while ( ! has_reached_the_element )
-    {
-        // Increase player coordinates in direction to the element
-        
-        test_coordinates_from_player_position .first +=
-            x_and_y_to_add_for_a_one_unit_movement .first ;
-        
-        test_coordinates_from_player_position .second +=
-            x_and_y_to_add_for_a_one_unit_movement .second ;
-        
-        if ( ! ( linear_equation_of_the_attracting_element
-            .point_is_to_the_left_of_the_line (
-                test_coordinates_from_player_position .first,
-                test_coordinates_from_player_position .second
-            ) ) )
-        {
-            has_reached_the_element = true ;
-        }
-        
-        number_of_iterations ++ ;
-    }
-    
-    
-    return number_of_iterations ;
 }
 
 
