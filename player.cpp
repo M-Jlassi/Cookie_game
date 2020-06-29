@@ -19,8 +19,7 @@ void Player::move ()
 {
     
     std::pair <float, float> direction_x_y = 
-        list_of_elements_attracting_the_player [ 0 ]
-        .calculate_linear_equation ()
+        list_of_elements_attracting_the_player [ 0 ] .linear_equation
         .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
     
     if ( key [ ALLEGRO_KEY_LEFT ] )
@@ -50,11 +49,15 @@ void Player::jump ( ALLEGRO_TIMER * timer )
     int time_since_jump_instruction = al_get_timer_count ( timer ) -
         jump_timer ;
     
-    std::pair <int, int> direction_x_y = 
-        list_of_elements_attracting_the_player [ 0 ]
-        .calculate_linear_equation ()
+    std::pair <int, int> direction_x_y =
+        list_of_elements_attracting_the_player [ 0 ] .linear_equation
+        .calculate_perpendicular_linear_equation ( x, y )
+        .calculate_line_going_in_the_opposite_direction ()
         .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
-
+    
+    
+    cout << direction_x_y .first << " | " << direction_x_y .second << endl << endl ;
+    
     if ( is_in_jump )
     {
         if ( gravity_changed )
@@ -73,8 +76,8 @@ void Player::jump ( ALLEGRO_TIMER * timer )
 
         if ( time_since_jump_instruction <= number_of_frames_in_a_jump )
         {
-            x += direction_x_y .second * 20 ;
-            y += direction_x_y .first * ( - 20 ) ;
+            x += direction_x_y .first * 20 ;
+            y += direction_x_y .second * ( - 20 ) ;
         }
 
         return ;
@@ -84,13 +87,13 @@ void Player::jump ( ALLEGRO_TIMER * timer )
     if ( key [ ALLEGRO_KEY_SPACE ] )
     {
         if ( is_in_jump || ! can_jump ) return ;
-
+        
         is_in_jump = true ;
         can_jump = false ;
         jump_timer = al_get_timer_count ( timer ) ;
 
-        x += direction_x_y .second * 20 ;
-        y += direction_x_y .first * ( - 20 ) ;
+        x += direction_x_y .first * 20 ;
+        y += direction_x_y .second * ( - 20 ) ;
     }
 
 }
@@ -103,12 +106,12 @@ void Player::gravity ( std::vector<Attracting_element> elements )
     verify_if_player_can_jump () ;
 
     get_closest_elements ( elements ) ;
-
-    std::pair <float, float> speed_x_y = get_speed () ;    
-
     
+    std::pair <float, float> speed_x_y = get_speed () ;
+
     x += speed_x_y .first ;
     y += speed_x_y .second ;
+    
 }
 
 
@@ -333,7 +336,7 @@ std::pair < float, float >
     pair < float, float > distance_between_the_player_and_the_element ;
     
     distance_between_the_player_and_the_element .first =
-        x - point_on_the_element .first ;
+        point_on_the_element .first - x ;
     
     std::ostringstream ss ;
     ss << point_on_the_element .second << " | " ;
@@ -344,12 +347,12 @@ std::pair < float, float >
     print_above_player ( text ) ;
     
     distance_between_the_player_and_the_element .second =
-        y - point_on_the_element .second ;
+        point_on_the_element .second - y ;
     
     al_draw_filled_circle ( point_on_the_element .first, point_on_the_element .second, 3,
                 al_map_rgb_f ( 1, 0.8, 0.5 ) ) ;
-    return point_on_the_element ;
-    //return distance_between_the_player_and_the_element ;
+    
+    return distance_between_the_player_and_the_element ;
 }
 
 
@@ -363,31 +366,19 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
         calculate_distance_between_the_player_and_the_first_attracting_element () ;
 
     
-    
     if ( abs ( speed_x_y .first ) >
         abs ( distance_x_y_between_the_player_and_the_element .first ) )
     {
-        //x = distance_x_y_between_the_player_and_the_element .first ;
-        //speed_x_y .first = 0 ;
-        /*if ( abs ( distance_x_y_between_the_player_and_the_element .first ) > 1 )
-        {
-            speed_x_y .first =
-                distance_x_y_between_the_player_and_the_element .first ;
-        }
-        else speed_x_y .first = 0 ;*/
+        speed_x_y .first =
+            distance_x_y_between_the_player_and_the_element .first ;
+ 
     }
     
     if ( abs ( speed_x_y .second ) >
          abs ( distance_x_y_between_the_player_and_the_element .second ) )
     {
-        //y = distance_x_y_between_the_player_and_the_element .second ;
-        //speed_x_y .second = 0 ;
-        /*if ( abs ( distance_x_y_between_the_player_and_the_element .second ) > 1 )
-        {
-            speed_x_y .second =
-                distance_x_y_between_the_player_and_the_element .second ;
-        }
-        //else speed_x_y .second = 0 ;*/
+        speed_x_y .second =
+            distance_x_y_between_the_player_and_the_element .second ;
     }
     
     

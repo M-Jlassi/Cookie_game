@@ -180,8 +180,8 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
     if ( linear_equation .point_is_on_the_line ( x, y ) )
     {
         line_going_in_the_direction_of_the_element = 
-            calculate_perpendicular_linear_equation ( x, y,
-            left_boundary_x, left_boundary_y ) ;
+            linear_equation .calculate_perpendicular_linear_equation ( x, y )
+            .calculate_line_going_in_the_opposite_direction () ;
         
         return line_going_in_the_direction_of_the_element ;
     }
@@ -202,12 +202,8 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
     else if ( linear_equation .point_is_to_the_left_of_the_line ( x, y ) )
     {        
         Linear_equation left_boundary_perpendicular_to_the_attracting_element =
-            calculate_perpendicular_linear_equation (
-                left_boundary_x,
-                left_boundary_y,
-                right_boundary_x,
-                right_boundary_y
-            ) ;
+            linear_equation .calculate_perpendicular_linear_equation (
+                left_boundary_x, left_boundary_y ) ;
 
         if ( left_boundary_perpendicular_to_the_attracting_element
             .point_is_on_the_line ( x, y ) )
@@ -235,7 +231,7 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
 
         else
         {
-            float x_right_boundary_if_line_continues =
+            /*float x_right_boundary_if_line_continues =
                 right_boundary_x
                 + ( linear_equation .direction_x * 1 ) ;
 
@@ -243,14 +239,10 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
                 right_boundary_y
                 + ( linear_equation .direction_y
                 * linear_equation .number_of_y_for_one_x ) ;
-
+*/
             Linear_equation right_boundary_perpendicular_to_the_attracting_element =
-                calculate_perpendicular_linear_equation (
-                    right_boundary_x,
-                    right_boundary_y,
-                    x_right_boundary_if_line_continues,
-                    y_right_boundary_if_line_continues
-                ) ;
+                linear_equation .calculate_perpendicular_linear_equation (
+                    right_boundary_x, right_boundary_y ) ;
 
             Linear_equation line_going_in_the_opposite_direction =
                 right_boundary_perpendicular_to_the_attracting_element
@@ -298,12 +290,9 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
     else
     {
         Linear_equation left_boundary_perpendicular_to_the_reversed_attracting_element =
-            calculate_perpendicular_linear_equation (
-                right_boundary_x,
-                right_boundary_y,
-                left_boundary_x,
-                left_boundary_y
-            ) ;
+            linear_equation .calculate_perpendicular_linear_equation (
+                right_boundary_x, right_boundary_y )
+                .calculate_line_going_in_the_opposite_direction () ;
 
         if ( left_boundary_perpendicular_to_the_reversed_attracting_element
             .point_is_on_the_line ( x, y ) )
@@ -331,22 +320,10 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
 
         else
         {
-            float x_left_boundary_if_line_continues =
-                left_boundary_x
-                + ( ( -1 ) * linear_equation .direction_x * 1 ) ;
-
-            float y_left_boundary_if_line_continues =
-                left_boundary_y
-                + ( ( -1 ) * linear_equation .direction_y
-                * linear_equation .number_of_y_for_one_x ) ;
-
             Linear_equation right_boundary_perpendicular_to_the_reversed_attracting_element =
-                calculate_perpendicular_linear_equation (
-                    left_boundary_x,
-                    left_boundary_y,
-                    x_left_boundary_if_line_continues,
-                    y_left_boundary_if_line_continues
-                ) ;
+                linear_equation .calculate_perpendicular_linear_equation (
+                    left_boundary_x, left_boundary_y )
+                    .calculate_line_going_in_the_opposite_direction () ;
 
             Linear_equation line_going_in_the_opposite_direction =
                 right_boundary_perpendicular_to_the_reversed_attracting_element
@@ -1112,82 +1089,99 @@ float calculate_value_of_y_when_x_is_zero ( float x1, float y1, float x2, float 
 }
 
 
-Linear_equation calculate_perpendicular_linear_equation (
-    float x1, float y1, float x2, float y2
-)
+Linear_equation Linear_equation::calculate_perpendicular_linear_equation (
+    float x, float y )
 {
-    Linear_equation linear_equation_of_element
-        = calculate_linear_equation_of_element ( x1, y1, x2, y2 ) ;
-    
-    
     int perpendicular_direction_x, perpendicular_direction_y ;
     
-    if ( linear_equation_of_element .direction_x == 1 )
+    // From left to right
+    
+    if ( direction_x == 1 )
     {
-        if ( linear_equation_of_element .direction_y == 1 )
+        // From top to bottom
+        
+        if ( direction_y == 1 )
         {
-            perpendicular_direction_x = 1 ;
-            perpendicular_direction_y = -1 ;
+            perpendicular_direction_x = 1 ; // From left to right
+            perpendicular_direction_y = -1 ; // From bottom to top
         }
         
-        else if ( linear_equation_of_element .direction_y == -1 )
+        // From bottom to top
+        
+        else if ( direction_y == -1 )
         {
-            perpendicular_direction_x = -1 ;
-            perpendicular_direction_y = -1 ;
+            perpendicular_direction_x = -1 ; // From right to left
+            perpendicular_direction_y = -1 ; // From bottom to top
         }
         
-        else if ( linear_equation_of_element .direction_y == 0 )
+        // Horizontal
+        
+        else if ( direction_y == 0 )
         {
-            perpendicular_direction_x = 0 ;
-            perpendicular_direction_y = -1 ;
+            perpendicular_direction_x = 0 ; // Vertical
+            perpendicular_direction_y = -1 ; // From bottom to top
         }
     }
     
-    else if ( linear_equation_of_element .direction_x == -1 )
+    // From right to left
+    
+    else if ( direction_x == -1 )
     {
-        if ( linear_equation_of_element .direction_y == 1 )
+        // From top to bottom
+        
+        if ( direction_y == 1 )
         {
-            perpendicular_direction_x = 1 ;
-            perpendicular_direction_y = 1 ;
+            perpendicular_direction_x = 1 ; // From left to right
+            perpendicular_direction_y = 1 ; // From top to bottom
         }
         
-        else if ( linear_equation_of_element .direction_y == -1 )
+        // From bottom to top
+        
+        else if ( direction_y == -1 )
         {
-            perpendicular_direction_x = -1 ;
-            perpendicular_direction_y = 1 ;
+            perpendicular_direction_x = -1 ; // From right to left
+            perpendicular_direction_y = 1 ; // From top to bottom 
         }
         
-        else if ( linear_equation_of_element .direction_y == 0 )
+        // Horizontal
+                
+        else if ( direction_y == 0 )
         {
-            perpendicular_direction_x = 0 ;
-            perpendicular_direction_y = 1 ;
+            perpendicular_direction_x = 0 ; // Vertical
+            perpendicular_direction_y = 1 ; // From top to bottom
         }
     }
     
-    else if ( linear_equation_of_element .direction_x == 0 )
+    // Vertical
+    
+    else if ( direction_x == 0 )
     {
-        if ( linear_equation_of_element .direction_y == 1 )
+        // From top to bottom
+        
+        if ( direction_y == 1 )
         {
-            perpendicular_direction_x = 1 ;
-            perpendicular_direction_y = 0 ;
+            perpendicular_direction_x = 1 ; // From left to right
+            perpendicular_direction_y = 0 ; // Horizontal
         }
         
-        else if ( linear_equation_of_element .direction_y == -1 )
+        // From bottom to top
+        
+        else if ( direction_y == -1 )
         {
-            perpendicular_direction_x = -1 ;
-            perpendicular_direction_y = 0 ;
+            perpendicular_direction_x = -1 ; // From right to left
+            perpendicular_direction_y = 0 ; // Horizontal
         }
     }
     
     float perpendicular_number_of_y_for_one_x
-        = ( 1 / linear_equation_of_element .number_of_y_for_one_x ) ;
+        = ( 1 / number_of_y_for_one_x ) ;
     
     
     float perpendicular_value_of_y_when_x_is_zero =
         calculate_value_of_y_when_x_is_zero (
-            x1, y1,
-            x1 + ( perpendicular_direction_x * ( 1 / perpendicular_number_of_y_for_one_x ) ),
-            y1 + ( perpendicular_direction_y * perpendicular_number_of_y_for_one_x ),
+            x, y,
+            x + ( perpendicular_direction_x * ( 1 / perpendicular_number_of_y_for_one_x ) ),
+            y + ( perpendicular_direction_y * perpendicular_number_of_y_for_one_x ),
             perpendicular_number_of_y_for_one_x
         ) ;
     

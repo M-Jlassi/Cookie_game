@@ -44,6 +44,9 @@ public:
     
     float calculate_value_of_x_if_y_is_on_the_line ( float y ) ;
     
+    Linear_equation calculate_perpendicular_linear_equation (
+        float x, float y ) ;
+    
     Linear_equation calculate_line_going_in_the_opposite_direction () ;
 
     std::pair <float, float> calculate_x_and_y_to_add_for_a_one_unit_movement () ;
@@ -67,10 +70,6 @@ Linear_equation
 
 float calculate_value_of_y_when_x_is_zero ( float x1, float y1, float x2, float y2,
     float number_of_y_for_one_x ) ;
-
-Linear_equation calculate_perpendicular_linear_equation (
-    float x1, float y1, float x2, float y2
-) ;
 
 
 class Attracting_element

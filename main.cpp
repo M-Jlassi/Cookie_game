@@ -61,7 +61,7 @@ int main(int argc, char** argv)
     must_init ( al_init (), "allegro" ) ;
     must_init ( al_install_keyboard (), "keyboard" ) ;
     
-    ALLEGRO_TIMER * timer = al_create_timer ( 1.0 / 2.0 ) ;
+    ALLEGRO_TIMER * timer = al_create_timer ( 1.0 / 30.0 ) ;
     must_init ( timer, "timer" ) ;
     
     ALLEGRO_EVENT_QUEUE * event_queue = al_create_event_queue () ;
@@ -98,7 +98,7 @@ int main(int argc, char** argv)
     
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 175, 800, 1025, 800 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 175, 800, 1025, 800 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
@@ -115,7 +115,7 @@ int main(int argc, char** argv)
     
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 1100, 725, 1100, 200 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 1100, 725, 1100, 200 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 1025, 800, 1100, 725 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 1025, 800, 1100, 725 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
@@ -145,7 +145,7 @@ int main(int argc, char** argv)
 
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 100, 600, 175, 800 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 100, 600, 175, 800 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
@@ -159,7 +159,7 @@ int main(int argc, char** argv)
     
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 1100, 200, 1050, 50 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 1100, 200, 1050, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
@@ -173,7 +173,7 @@ int main(int argc, char** argv)
     
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 1050, 50, 900, 0 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 1050, 50, 900, 0 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
@@ -187,7 +187,7 @@ int main(int argc, char** argv)
     
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 900, 0, 400, 50 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 900, 0, 400, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
@@ -201,7 +201,7 @@ int main(int argc, char** argv)
     
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 400, 50, 200, 50 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 400, 50, 200, 50 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     std::pair < float, float > x_and_y = 
@@ -221,7 +221,7 @@ int main(int argc, char** argv)
     
     cout << linear_equation_of_element .point_is_on_the_line ( x, y ) << endl << endl ;
     
-    linear_equation_of_element = calculate_perpendicular_linear_equation ( 200, 50, 100, 600 ) ;
+    //linear_equation_of_element = calculate_perpendicular_linear_equation ( 200, 50, 100, 600 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
     
@@ -350,7 +350,7 @@ int main(int argc, char** argv)
         // Left wall
         //al_draw_filled_rectangle ( 0, 0, 100, 900,
           //      al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
-        
+        /*
         // Right wall
         al_draw_filled_rectangle ( 1100, 0, 1200, 900,
                 al_map_rgb_f ( 0.35, 0.35, 0.35 ) ) ;
@@ -370,7 +370,7 @@ int main(int argc, char** argv)
         // Point
         al_draw_filled_circle ( 1050, 50, 5,
                 al_map_rgb_f ( 1, 1, 1 ) ) ;
-        
+        */
         // Draw elements attracting the player
         
         /*for ( int i = 0 ; i < player .list_of_elements_attracting_the_player .size () ; i ++ )
