@@ -169,19 +169,122 @@ Linear_equation Attracting_element :: calculate_linear_equation ()
 }
 
 
+// Defines the direction of the gravity
 
 Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the_element (
         float x, float y )
 {
     Linear_equation line_going_in_the_direction_of_the_element = Linear_equation () ;
     
-    // If the player touches the element: return a perpendicular going below the element
-
+    /* If the player crosses the linear equation of the element
+     * Verify if it touches the element: return a perpendicular going below the element
+     * Else: return the line going to the closest boundary
+     */
+    
     if ( linear_equation .point_is_on_the_line ( x, y ) )
     {
-        line_going_in_the_direction_of_the_element = 
-            linear_equation .calculate_perpendicular_linear_equation ( x, y )
-            .calculate_line_going_in_the_opposite_direction () ;
+        
+        
+        /* This is the last case: the X and Y coordinates are between the 
+         * boundaries of the element, return a perpendicular
+         */
+        
+        if ( point_is_within_the_boundaries_of_the_element ( x, y ) )
+        {
+            line_going_in_the_direction_of_the_element = 
+                linear_equation .calculate_perpendicular_linear_equation ( x, y )
+                .calculate_line_going_in_the_opposite_direction () ;
+        }
+        
+        else
+        {
+            if ( linear_equation .direction_x != 0 )
+            {
+                // From left to right
+
+                if ( linear_equation .direction_x == 1 )
+                {
+                    // The point is to the left of the element
+
+                    if ( x < left_boundary_x )
+                    {
+                        line_going_in_the_direction_of_the_element = linear_equation ;
+
+                        return line_going_in_the_direction_of_the_element ;
+                    }
+
+                    else if ( x > right_boundary_x )
+                    {
+                        line_going_in_the_direction_of_the_element = linear_equation
+                            .calculate_line_going_in_the_opposite_direction () ;
+
+                        return line_going_in_the_direction_of_the_element ;
+                    }
+                }
+
+                // From right to left
+
+                else if ( linear_equation .direction_x == -1 )
+                {
+                    if ( x > left_boundary_x )
+                    {
+                        line_going_in_the_direction_of_the_element = linear_equation ;
+
+                        return line_going_in_the_direction_of_the_element ;
+                    }
+
+                    else if ( x < right_boundary_x )
+                    {
+                        line_going_in_the_direction_of_the_element = linear_equation
+                            .calculate_line_going_in_the_opposite_direction () ;
+
+                        return line_going_in_the_direction_of_the_element ;
+                    }
+                }
+            }
+
+            // With a vertical line, verify if the Y coordinate is outside the boundaries
+
+            else if ( linear_equation .direction_x == 1 )
+            {
+                if ( linear_equation .direction_y == 1 )
+                {
+                    if ( y < left_boundary_y )
+                    {
+                        line_going_in_the_direction_of_the_element = linear_equation ;
+
+                        return line_going_in_the_direction_of_the_element ;
+                    }
+
+                    else if ( y > right_boundary_y )
+                    {
+                        line_going_in_the_direction_of_the_element = linear_equation
+                            .calculate_line_going_in_the_opposite_direction () ;
+
+                        return line_going_in_the_direction_of_the_element ;
+                    }
+                }
+
+                else if ( linear_equation .direction_y == -1 )
+                {
+                    if ( y > left_boundary_y )
+                    {
+                        line_going_in_the_direction_of_the_element = linear_equation ;
+
+                        return line_going_in_the_direction_of_the_element ;
+                    }
+
+                    else if ( y < right_boundary_y )
+                    {
+                        line_going_in_the_direction_of_the_element = linear_equation
+                            .calculate_line_going_in_the_opposite_direction () ;
+
+                        return line_going_in_the_direction_of_the_element ;
+                    }
+                }
+            }
+        }
+        
         
         return line_going_in_the_direction_of_the_element ;
     }
@@ -365,11 +468,88 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
             }
         }
     }
-    
-    
+
+
     return line_going_in_the_direction_of_the_element ;
 }
-        
+
+
+// Function used to know if the player is above the element
+
+bool Attracting_element :: point_is_within_the_boundaries_of_the_element ( float x, float y )
+{
+    // Check if the coordinates are farther than the boundaries
+
+    // If the element has different X coordinates for left and right boundaries
+
+    if ( linear_equation .direction_x != 0 )
+    {
+        // From left to right
+
+        if ( linear_equation .direction_x == 1 )
+        {
+            // The point is to the left of the element
+
+            if ( x < left_boundary_x )
+            {
+                return false ;
+            }
+
+            else if ( x > right_boundary_x )
+            {
+                return false ;
+            }
+        }
+
+        // From right to left
+
+        else if ( linear_equation .direction_x == -1 )
+        {
+            if ( x > left_boundary_x )
+            {
+                return false ;
+            }
+
+            else if ( x < right_boundary_x )
+            {
+                return false ;
+            }
+        }
+    }
+
+    // With a vertical line, verify if the Y coordinate is outside the boundaries
+
+    else if ( linear_equation .direction_x == 1 )
+    {
+        if ( linear_equation .direction_y == 1 )
+        {
+            if ( y < left_boundary_y )
+            {
+                return false ;
+            }
+
+            else if ( y > right_boundary_y )
+            {
+                return false ;
+            }
+        }
+
+        else if ( linear_equation .direction_y == -1 )
+        {
+            if ( y > left_boundary_y )
+            {
+                return false ;
+            }
+
+            else if ( y < right_boundary_y )
+            {
+                return false ;
+            }
+        }
+    }
+    
+    return true ;
+}
         
 
 std::ostream& operator<<(std::ostream &strm, const Attracting_element &element)

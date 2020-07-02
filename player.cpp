@@ -49,14 +49,10 @@ void Player::jump ( ALLEGRO_TIMER * timer )
     int time_since_jump_instruction = al_get_timer_count ( timer ) -
         jump_timer ;
     
-    std::pair <int, int> direction_x_y =
+    std::pair <float, float> direction_x_y =
         list_of_elements_attracting_the_player [ 0 ] .linear_equation
         .calculate_perpendicular_linear_equation ( x, y )
-        .calculate_line_going_in_the_opposite_direction ()
         .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
-    
-    
-    cout << direction_x_y .first << " | " << direction_x_y .second << endl << endl ;
     
     if ( is_in_jump )
     {
@@ -77,7 +73,7 @@ void Player::jump ( ALLEGRO_TIMER * timer )
         if ( time_since_jump_instruction <= number_of_frames_in_a_jump )
         {
             x += direction_x_y .first * 20 ;
-            y += direction_x_y .second * ( - 20 ) ;
+            y += direction_x_y .second * 20 ;
         }
 
         return ;
@@ -93,7 +89,7 @@ void Player::jump ( ALLEGRO_TIMER * timer )
         jump_timer = al_get_timer_count ( timer ) ;
 
         x += direction_x_y .first * 20 ;
-        y += direction_x_y .second * ( - 20 ) ;
+        y += direction_x_y .second * 20 ;
     }
 
 }
@@ -214,7 +210,13 @@ void Player::get_closest_elements (
                 .point_is_to_the_left_of_the_line (
                     list_of_test_coordinates_from_player_position [ i ] .first,
                     list_of_test_coordinates_from_player_position [ i ] .second
-                ) ) )
+                ) )
+                && 
+                list_of_attracting_elements [ i ]
+                .point_is_within_the_boundaries_of_the_element (
+                    list_of_test_coordinates_from_player_position [ i ] .first,
+                    list_of_test_coordinates_from_player_position [ i ] .second
+                ) )
             {
                 index_of_elements_reached .push_back ( i ) ;
                 has_reached_an_element = true ;
@@ -261,10 +263,7 @@ void Player::get_closest_elements (
     
     print_above_player ( indices ) ;
     */
-    /*
-    list_of_elements_attracting_the_player [ 0 ] = *(new Attracting_element (
-        list_of_attracting_elements [ index_of_new_attracting_element ] ) ) ;
-*/}
+}
 
 
 std::pair <float, float> Player::get_speed ()

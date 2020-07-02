@@ -373,14 +373,14 @@ int main(int argc, char** argv)
         */
         // Draw elements attracting the player
         
-        /*for ( int i = 0 ; i < player .list_of_elements_attracting_the_player .size () ; i ++ )
+        for ( int i = 0 ; i < player .list_of_elements_attracting_the_player .size () ; i ++ )
         {
             al_draw_line ( player .list_of_elements_attracting_the_player [ i ] .left_boundary_x,
                 player .list_of_elements_attracting_the_player [ i ] .left_boundary_y,
                 player .list_of_elements_attracting_the_player [ i ] .right_boundary_x,
                 player .list_of_elements_attracting_the_player [ i ] .right_boundary_y,
                 al_map_rgb_f ( 1, 1, 1 ), 1 ) ;
-        }*/
+        }
         
         
         

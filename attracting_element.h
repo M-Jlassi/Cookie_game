@@ -102,6 +102,8 @@ public:
     Linear_equation calculate_line_going_in_the_direction_of_the_element (
         float x, float y ) ;
     
+    bool point_is_within_the_boundaries_of_the_element ( float x, float y ) ;
+    
 } ;
 
 std::ostream& operator<<(std::ostream &strm, const Attracting_element &element) ;
