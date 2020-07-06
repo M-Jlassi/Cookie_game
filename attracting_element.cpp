@@ -182,11 +182,9 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
      */
     
     if ( linear_equation .point_is_on_the_line ( x, y ) )
-    {
-        
-        
-        /* This is the last case: the X and Y coordinates are between the 
-         * boundaries of the element, return a perpendicular
+    {        
+        /* The X and Y coordinates are between the boundaries of the element:
+         * return a perpendicular
          */
         
         if ( point_is_within_the_boundaries_of_the_element ( x, y ) )
@@ -194,6 +192,9 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
             line_going_in_the_direction_of_the_element = 
                 linear_equation .calculate_perpendicular_linear_equation ( x, y )
                 .calculate_line_going_in_the_opposite_direction () ;
+            
+            
+            return line_going_in_the_direction_of_the_element ;
         }
         
         else
@@ -284,9 +285,6 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
                 }
             }
         }
-        
-        
-        return line_going_in_the_direction_of_the_element ;
     }
 
     /*
@@ -303,7 +301,7 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
     // Player is above the element
 
     else if ( linear_equation .point_is_to_the_left_of_the_line ( x, y ) )
-    {        
+    {
         Linear_equation left_boundary_perpendicular_to_the_attracting_element =
             linear_equation .calculate_perpendicular_linear_equation (
                 left_boundary_x, left_boundary_y ) ;

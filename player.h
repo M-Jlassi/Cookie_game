@@ -44,7 +44,7 @@ public :
     bool can_jump ;
     bool done ;
     
-    const int number_of_frames_in_a_jump = 20 ;
+    const int number_of_frames_in_a_jump = 5 ;
     
     
     Player ( std::vector < Attracting_element > list_of_elements_attracting_the_player ) ;

@@ -146,8 +146,7 @@ void Player::get_closest_elements (
     
     vector < pair < float, float > > list_of_test_coordinates_from_player_position ;
     
-    Linear_equation linear_equation_of_the_attracting_element ;
-    vector < Linear_equation > list_of_linear_equations_of_the_attracting_elements ;
+    vector < bool > list_of_boolean_indicating_if_the_player_is_to_the_left_of_the_line ;
     
     Linear_equation line_going_in_the_direction_of_the_element ;
     
@@ -160,19 +159,10 @@ void Player::get_closest_elements (
         list_of_test_coordinates_from_player_position .push_back (
             test_coordinates_from_player_position ) ;
         
-        
-        
-        linear_equation_of_the_attracting_element =
-        calculate_linear_equation_of_element (
-            list_of_attracting_elements [ i ] .left_boundary_x,
-            list_of_attracting_elements [ i ] .left_boundary_y,
-            list_of_attracting_elements [ i ] .right_boundary_x,
-            list_of_attracting_elements [ i ] .right_boundary_y
-        ) ;
-    
-        list_of_linear_equations_of_the_attracting_elements .push_back (
-            linear_equation_of_the_attracting_element ) ;
-    
+        list_of_boolean_indicating_if_the_player_is_to_the_left_of_the_line
+            .push_back ( list_of_attracting_elements [ i ] .linear_equation
+                .point_is_to_the_left_of_the_line ( x, y ) || list_of_attracting_elements [ i ] .linear_equation
+                .point_is_on_the_line ( x, y )) ;
     
         line_going_in_the_direction_of_the_element =
             list_of_attracting_elements [ i ]
@@ -205,22 +195,44 @@ void Player::get_closest_elements (
             list_of_test_coordinates_from_player_position [ i ] .second +=
                 list_of_x_and_y_to_add_for_a_one_unit_movement [ i ] .second ;
 
-            
-            if ( ! ( list_of_linear_equations_of_the_attracting_elements [ i ]
-                .point_is_to_the_left_of_the_line (
-                    list_of_test_coordinates_from_player_position [ i ] .first,
-                    list_of_test_coordinates_from_player_position [ i ] .second
-                ) )
-                && 
-                list_of_attracting_elements [ i ]
-                .point_is_within_the_boundaries_of_the_element (
-                    list_of_test_coordinates_from_player_position [ i ] .first,
-                    list_of_test_coordinates_from_player_position [ i ] .second
-                ) )
+            if ( list_of_boolean_indicating_if_the_player_is_to_the_left_of_the_line [ i ] )
             {
-                index_of_elements_reached .push_back ( i ) ;
-                has_reached_an_element = true ;
+                if ( ! ( list_of_attracting_elements [ i ] .linear_equation
+                    .point_is_to_the_left_of_the_line (
+                        list_of_test_coordinates_from_player_position [ i ] .first,
+                        list_of_test_coordinates_from_player_position [ i ] .second
+                    ) )
+                    && 
+                    list_of_attracting_elements [ i ]
+                    .point_is_within_the_boundaries_of_the_element (
+                        list_of_test_coordinates_from_player_position [ i ] .first,
+                        list_of_test_coordinates_from_player_position [ i ] .second
+                    ) )
+                {
+                    index_of_elements_reached .push_back ( i ) ;
+                    has_reached_an_element = true ;
+                }
             }
+            
+            else
+            {
+                if ( list_of_attracting_elements [ i ] .linear_equation
+                    .point_is_to_the_left_of_the_line (
+                        list_of_test_coordinates_from_player_position [ i ] .first,
+                        list_of_test_coordinates_from_player_position [ i ] .second
+                    )
+                    && 
+                    list_of_attracting_elements [ i ]
+                    .point_is_within_the_boundaries_of_the_element (
+                        list_of_test_coordinates_from_player_position [ i ] .first,
+                        list_of_test_coordinates_from_player_position [ i ] .second
+                    ) )
+                {
+                    index_of_elements_reached .push_back ( i ) ;
+                    has_reached_an_element = true ;
+                }
+            }
+            
         }
         
         
@@ -248,21 +260,47 @@ void Player::get_closest_elements (
     }
     
     
-    /*
+    
     // PRINT ABOVE THE PLAYER
     std::ostringstream ss ;
-    //ss << number_of_iterations ;
-    //string iterations ( ss .str () ) ;
+    
+    ss << ! ( list_of_attracting_elements [ 7 ] .linear_equation
+                .point_is_to_the_left_of_the_line (
+                    list_of_test_coordinates_from_player_position [ 7 ] .first,
+                    list_of_test_coordinates_from_player_position [ 7 ] .second
+                ) ) << " | " ;
+    ss << list_of_attracting_elements [ 7 ]
+                .point_is_within_the_boundaries_of_the_element (
+                    list_of_test_coordinates_from_player_position [ 7 ] .first,
+                    list_of_test_coordinates_from_player_position [ 7 ] .second
+                ) << " | " ;
+    
+    al_draw_filled_circle ( list_of_test_coordinates_from_player_position [ 7 ] .first,
+                    list_of_test_coordinates_from_player_position [ 7 ] .second, 10, al_map_rgb(200, 100, 50)) ;
+    
+    ss << ! ( list_of_attracting_elements [ 8 ] .linear_equation
+                .point_is_to_the_left_of_the_line (
+                    list_of_test_coordinates_from_player_position [ 8 ] .first,
+                    list_of_test_coordinates_from_player_position [ 8 ] .second
+                ) ) << " | " ;
+    ss << list_of_attracting_elements [ 8 ]
+                .point_is_within_the_boundaries_of_the_element (
+                    list_of_test_coordinates_from_player_position [ 8 ] .first,
+                    list_of_test_coordinates_from_player_position [ 8 ] .second
+                ) << " | " ;
+    
+    al_draw_filled_circle ( list_of_test_coordinates_from_player_position [ 8 ] .first,
+                    list_of_test_coordinates_from_player_position [ 8 ] .second, 10, al_map_rgb(200, 100, 50)) ;
     
     for ( int i = 0 ; i < index_of_elements_reached .size () ; i ++ )
     {
         ss << index_of_elements_reached [ i ] << " ; " ;
     }
     
-    string indices ( ss .str () ) ;
+    string text ( ss .str () ) ;
     
-    print_above_player ( indices ) ;
-    */
+    print_above_player ( text ) ;
+    
 }
 
 
@@ -336,14 +374,6 @@ std::pair < float, float >
     
     distance_between_the_player_and_the_element .first =
         point_on_the_element .first - x ;
-    
-    std::ostringstream ss ;
-    ss << point_on_the_element .second << " | " ;
-    ss << y << " || " ;
-    ss << can_jump << " [[[";
-    ss << distance_between_the_player_and_the_element .second ;
-    string text ( ss .str () ) ;
-    print_above_player ( text ) ;
     
     distance_between_the_player_and_the_element .second =
         point_on_the_element .second - y ;
