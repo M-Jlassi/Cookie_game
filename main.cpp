@@ -282,7 +282,6 @@ int main(int argc, char** argv)
     
     
     
-    
     while ( 1 ) 
     {        
         al_clear_to_color ( al_map_rgb_f ( 0, 0, 0 ) ) ;

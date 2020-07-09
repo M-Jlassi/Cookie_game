@@ -7,7 +7,7 @@
 #include <allegro5/allegro_primitives.h>
 
 #include "player.h"
-
+#include <iomanip>
 using namespace std;
 
 Player::Player ( vector < Attracting_element > list_of_elements_attracting_the_player ) : x ( 600 ), y ( 800 ),
@@ -22,22 +22,34 @@ void Player::move ()
         list_of_elements_attracting_the_player [ 0 ] .linear_equation
         .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
     
+    
     if ( key [ ALLEGRO_KEY_LEFT ] )
     {
-        x += direction_x_y .first * ( - 5 ) ;
-        y += direction_x_y .second * ( - 5 ) ;
+        x += direction_x_y .first * ( - 10 ) ;
+        y += direction_x_y .second * ( - 10 ) ;
     }
         
         
 
     if ( key [ ALLEGRO_KEY_RIGHT ] )
     {
-        x += direction_x_y .first * 5 ;
-        y += direction_x_y .second * 5 ;
+        x += direction_x_y .first * 10 ;
+        y += direction_x_y .second * 10 ;
     }
-    //cout << "X: " << x << endl ;
-    //cout << "Y: " << y << endl ;
-        
+    
+    
+    /*
+    std::ostringstream ss ;
+    
+    ss << x - list_of_elements_attracting_the_player [ 0 ] .linear_equation .calculate_value_of_x_if_y_is_on_the_line ( y ) << " | " ;
+    ss << y - list_of_elements_attracting_the_player [ 0 ] .linear_equation .calculate_value_of_y_if_x_is_on_the_line ( x ) ;
+    
+    
+    
+    string text ( ss .str () ) ;
+    
+    print_above_player ( text ) ;
+      */  
 }
 
 
@@ -195,8 +207,8 @@ void Player::get_closest_elements (
             list_of_test_coordinates_from_player_position [ i ] .second +=
                 list_of_x_and_y_to_add_for_a_one_unit_movement [ i ] .second ;
 
-            if ( list_of_boolean_indicating_if_the_player_is_to_the_left_of_the_line [ i ] )
-            {
+            //if ( list_of_boolean_indicating_if_the_player_is_to_the_left_of_the_line [ i ] )
+            //{
                 if ( ! ( list_of_attracting_elements [ i ] .linear_equation
                     .point_is_to_the_left_of_the_line (
                         list_of_test_coordinates_from_player_position [ i ] .first,
@@ -212,7 +224,7 @@ void Player::get_closest_elements (
                     index_of_elements_reached .push_back ( i ) ;
                     has_reached_an_element = true ;
                 }
-            }
+            /*}
             
             else
             {
@@ -231,7 +243,7 @@ void Player::get_closest_elements (
                     index_of_elements_reached .push_back ( i ) ;
                     has_reached_an_element = true ;
                 }
-            }
+            }*/
             
         }
         
@@ -262,7 +274,7 @@ void Player::get_closest_elements (
     
     
     // PRINT ABOVE THE PLAYER
-    std::ostringstream ss ;
+    /*std::ostringstream ss ;
     
     ss << ! ( list_of_attracting_elements [ 7 ] .linear_equation
                 .point_is_to_the_left_of_the_line (
@@ -299,7 +311,7 @@ void Player::get_closest_elements (
     
     string text ( ss .str () ) ;
     
-    print_above_player ( text ) ;
+    print_above_player ( text ) ;*/
     
 }
 
@@ -326,8 +338,6 @@ std::pair <float, float> Player::get_speed ()
         list_of_speeds_x .push_back ( speed_x_y_for_the_element .first ) ;
         list_of_speeds_y .push_back ( speed_x_y_for_the_element .second ) ;
     }
-    
-
     
     
     pair < float, float > speed_x_y ;
@@ -369,6 +379,17 @@ std::pair < float, float >
             list_of_elements_attracting_the_player [ 0 ] .linear_equation,
             line_going_in_the_direction_of_the_first_attracting_element
         ) ;
+    
+    // PRINT ABOVE THE PLAYER
+    /*std::ostringstream ss ;
+    
+    ss << point_on_the_element .first << " | " << point_on_the_element .second << " | " ;
+    ss << list_of_elements_attracting_the_player [ 0 ] .linear_equation .point_is_on_the_line ( point_on_the_element .first, point_on_the_element .second ) ;
+    
+    string text ( ss .str () ) ;
+    
+    print_above_player ( text ) ;
+    */
     
     pair < float, float > distance_between_the_player_and_the_element ;
     

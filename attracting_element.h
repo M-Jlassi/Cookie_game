@@ -77,8 +77,8 @@ class Attracting_element
     
 public:
     
-    int left_boundary_x, left_boundary_y ;
-    int right_boundary_x, right_boundary_y ;
+    float left_boundary_x, left_boundary_y ;
+    float right_boundary_x, right_boundary_y ;
     float number_of_y_for_one_x ;
     float angle ;
     bool horizontal ;
@@ -110,6 +110,7 @@ std::ostream& operator<<(std::ostream &strm, const Attracting_element &element) 
 
 void draw_map ( std :: vector < Attracting_element > elements_of_the_map ) ;
 
+bool floats_are_equal_with_1_decimal_precision ( float number1, float number2 ) ;
 
 
 #endif /* ATTRACTING_ELEMENT_H */

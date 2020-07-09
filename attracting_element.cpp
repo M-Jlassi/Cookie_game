@@ -189,6 +189,11 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
         
         if ( point_is_within_the_boundaries_of_the_element ( x, y ) )
         {
+            if ( left_boundary_x == 1100 && right_boundary_x == 1100 )
+            {
+                cout << "Within" << endl ;
+                cout << y << endl ;
+            }
             line_going_in_the_direction_of_the_element = 
                 linear_equation .calculate_perpendicular_linear_equation ( x, y )
                 .calculate_line_going_in_the_opposite_direction () ;
@@ -199,6 +204,11 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
         
         else
         {
+            if ( left_boundary_x == 1100 && right_boundary_x == 1100 )
+            {
+                cout << "Without" << endl ;
+                cout << y << endl ;
+            }
             if ( linear_equation .direction_x != 0 )
             {
                 // From left to right
@@ -480,6 +490,7 @@ bool Attracting_element :: point_is_within_the_boundaries_of_the_element ( float
 
     // If the element has different X coordinates for left and right boundaries
 
+        
     if ( linear_equation .direction_x != 0 )
     {
         // From left to right
@@ -517,7 +528,7 @@ bool Attracting_element :: point_is_within_the_boundaries_of_the_element ( float
 
     // With a vertical line, verify if the Y coordinate is outside the boundaries
 
-    else if ( linear_equation .direction_x == 1 )
+    else if ( linear_equation .direction_x == 0 )
     {
         if ( linear_equation .direction_y == 1 )
         {
@@ -1545,7 +1556,7 @@ bool Linear_equation::point_is_on_the_line ( float x, float y )
     {
         float value_of_y_if_x_is_on_the_line = calculate_value_of_y_if_x_is_on_the_line ( x ) ;
 
-        if ( value_of_y_if_x_is_on_the_line == y )
+        if ( floats_are_equal_with_1_decimal_precision ( value_of_y_if_x_is_on_the_line, y ) )
         {
             return true ;
         }
@@ -1664,4 +1675,21 @@ void draw_map ( std :: vector < Attracting_element > elements_of_the_map )
     }
     
     return ;
+}
+
+
+// point_is_on_the_line comparing float must give an approximation
+
+bool floats_are_equal_with_1_decimal_precision ( float number1, float number2 )
+{
+    int number1_with_1_decimal_precision = number1 * 10 ;
+    
+    int number2_with_1_decimal_precision = number2 * 10 ;
+    
+    if ( number1_with_1_decimal_precision == number2_with_1_decimal_precision )
+    {
+        return true ;
+    }
+    
+    return false ;
 }
