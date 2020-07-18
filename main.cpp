@@ -11,8 +11,11 @@
  * Created on April 5, 2020, 5:38 PM
  */
 
+
+#include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
+#include <allegro5/allegro_image.h>
 
 #include "player.h"
 #include "attracting_element.h"
@@ -69,6 +72,10 @@ int main(int argc, char** argv)
     
     ALLEGRO_DISPLAY * display = al_create_display ( 1200, 900 ) ;
     must_init ( display, "display" ) ;
+    
+    must_init(al_init_image_addon(), "image");
+    ALLEGRO_BITMAP* cookie_player = al_load_bitmap("images/cookie_char/cookie_player_35x60.png");
+    must_init(cookie_player, "cookie_player");
     
     must_init ( al_init_primitives_addon (), "primitives" ) ;
 
@@ -288,6 +295,8 @@ int main(int argc, char** argv)
         
         draw_map ( elements ) ;
         
+        //al_draw_bitmap ( cookie_player, player .x - 17.5, player .y - 60, 0 ) ;
+        
     // PRINT ABOVE THE PLAYER
     /*std::ostringstream ss ;
     ss << point_on_the_element .first << " | " ;
@@ -382,6 +391,7 @@ int main(int argc, char** argv)
     }
     
     al_destroy_display ( display ) ;
+    al_destroy_bitmap ( cookie_player ) ;
     al_destroy_timer ( timer ) ;
     al_destroy_event_queue ( event_queue ) ;
     
