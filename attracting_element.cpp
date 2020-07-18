@@ -189,11 +189,6 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
         
         if ( point_is_within_the_boundaries_of_the_element ( x, y ) )
         {
-            if ( left_boundary_x == 1100 && right_boundary_x == 1100 )
-            {
-                cout << "Within" << endl ;
-                cout << y << endl ;
-            }
             line_going_in_the_direction_of_the_element = 
                 linear_equation .calculate_perpendicular_linear_equation ( x, y )
                 .calculate_line_going_in_the_opposite_direction () ;
@@ -204,11 +199,6 @@ Linear_equation Attracting_element::calculate_line_going_in_the_direction_of_the
         
         else
         {
-            if ( left_boundary_x == 1100 && right_boundary_x == 1100 )
-            {
-                cout << "Without" << endl ;
-                cout << y << endl ;
-            }
             if ( linear_equation .direction_x != 0 )
             {
                 // From left to right
@@ -1277,6 +1267,8 @@ float calculate_value_of_y_when_x_is_zero ( float x1, float y1, float x2, float 
     return value_of_y_when_x_is_zero ;
 }
 
+
+// Calculate a perpendicular linear equation starting at the point of coordinates x and y
 
 Linear_equation Linear_equation::calculate_perpendicular_linear_equation (
     float x, float y )

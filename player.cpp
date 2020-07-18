@@ -119,7 +119,6 @@ void Player::gravity ( std::vector<Attracting_element> elements )
 
     x += speed_x_y .first ;
     y += speed_x_y .second ;
-    
 }
 
 
@@ -435,6 +434,51 @@ std::pair <float, float> Player::smoothen_landing ( std::pair <float, float> spe
     return speed_x_y ;
 }
 
+
+void Player :: draw_player ()
+{
+    Linear_equation linear_equation_of_the_element_attracting_the_player =
+        list_of_elements_attracting_the_player [ 0 ] .linear_equation ;
+    
+    pair < float, float > x_and_y_to_add_parallel_to_the_element = 
+        linear_equation_of_the_element_attracting_the_player
+        .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
+    
+    pair < float, float > x_and_y_to_add_perpendicular_to_the_element =
+        linear_equation_of_the_element_attracting_the_player
+        .calculate_perpendicular_linear_equation ( x, y ) 
+        .calculate_x_and_y_to_add_for_a_one_unit_movement () ;
+    
+     
+    float upper_left_x = ( x_and_y_to_add_parallel_to_the_element. first * ( - 10 ) )
+        + ( x_and_y_to_add_perpendicular_to_the_element. first * 20 ) ;
+    float upper_left_y = ( x_and_y_to_add_parallel_to_the_element .second * ( - 10 ) )
+        + ( x_and_y_to_add_perpendicular_to_the_element .second * 20 ) ;
+    
+    float upper_right_x = ( x_and_y_to_add_parallel_to_the_element. first * 10 )
+        + ( x_and_y_to_add_perpendicular_to_the_element. first * 20 ) ;
+    float upper_right_y = ( x_and_y_to_add_parallel_to_the_element .second * 10 )
+        + ( x_and_y_to_add_perpendicular_to_the_element .second * 20 ) ;
+    
+    std::ostringstream ss ;
+    /*
+    ss << upper_left_x << " | " << upper_left_y << " :: " ;
+    ss << upper_right_x << " | " << upper_right_y << " :: " ;    
+    */
+    string text ( ss .str () ) ;
+    
+    print_above_player ( text ) ;
+    
+    al_draw_filled_triangle (
+            x,
+            y,
+            x + upper_left_x,
+            y + upper_left_y, 
+            x + upper_right_x, 
+            y + upper_right_y,
+            al_map_rgb_f ( 1, 1, 1 ) 
+    ) ;
+}
 
 
 void Player::print_above_player ( string text )

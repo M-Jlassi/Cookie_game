@@ -335,16 +335,9 @@ int main(int argc, char** argv)
         if ( event .type == ALLEGRO_EVENT_DISPLAY_CLOSE ) break ;
         if ( player .done ) break ;
         
+        player .draw_player () ;
         
-        al_draw_filled_triangle (
-                player.x,
-                player.y,
-                player.x - 10, 
-                player.y - 20, 
-                player.x + 10, 
-                player.y - 20,
-                al_map_rgb_f ( 1, 1, 1 ) 
-        ) ;
+        
         
         // Left wall
         //al_draw_filled_rectangle ( 0, 0, 100, 900,

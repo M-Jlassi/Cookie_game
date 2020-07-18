@@ -67,6 +67,8 @@ public :
     
     std::pair <float, float> smoothen_landing ( std::pair <float, float> speed_x_y ) ;
     
+    void draw_player () ;
+    
     void print_above_player ( std::string text ) ;
 } ;
 
