@@ -231,8 +231,6 @@ int main(int argc, char** argv)
     //linear_equation_of_element = calculate_perpendicular_linear_equation ( 200, 50, 100, 600 ) ;
     cout << linear_equation_of_element << endl << endl ;
     
-    
-    
     Attracting_element floor ( 175, 800, 1025, 800 ) ;
     Attracting_element right_wall ( 1100, 725, 1100, 200 ) ;
     Attracting_element right_edge ( 1025, 800, 1100, 725 ) ;
@@ -242,14 +240,31 @@ int main(int argc, char** argv)
     Attracting_element ceiling ( 900, 0, 400, 50 ) ;
     Attracting_element little_ceiling ( 400, 50, 200, 50 ) ;
     Attracting_element top_left_corner ( 200, 50, 100, 600 ) ;
+
+    
+    /*Attracting_element floor ( 10, 890, 1190, 890 ) ;
+    Attracting_element left_wall ( 10, 10, 10, 890 ) ;
+    Attracting_element left_wall_left_slope_of_hill ( 10, 300, 200, 450 ) ;
+    Attracting_element left_wall_right_slope_of_hill ( 200, 450, 10, 600) ;
+    Attracting_element right_wall ( 1190, 890, 1190, 10 ) ;
+    Attracting_element ceiling ( 1190, 10, 10, 10 ) ;*/
     
     vector < Attracting_element > list_of_elements_attracting_the_player ;
     list_of_elements_attracting_the_player .push_back ( floor ) ;
     
     Player player ( list_of_elements_attracting_the_player ) ;
     
-    vector<Attracting_element> elements ;
+    /*vector<Attracting_element> elements ;
     elements .push_back ( floor ) ;
+    elements .push_back ( left_wall ) ;
+    elements .push_back ( left_wall_left_slope_of_hill ) ;
+    elements .push_back ( left_wall_right_slope_of_hill ) ;
+    elements .push_back ( right_wall ) ;
+    elements .push_back ( ceiling ) ;*/
+    
+         vector<Attracting_element> elements ;
+    elements .push_back ( floor ) ;
+    elements .push_back ( left_edge ) ;
     elements .push_back ( right_wall ) ;
     elements .push_back ( right_edge ) ;
     elements .push_back ( left_edge ) ;
@@ -258,29 +273,7 @@ int main(int argc, char** argv)
     elements .push_back ( ceiling ) ;
     elements .push_back ( little_ceiling ) ;
     elements .push_back ( top_left_corner ) ;
-    
-    /*Attracting_element a ( 500, 500, 1000, 500 ) ;
-    Attracting_element b ( 900, 400, 900, 1000 ) ;
-    
-    elements .push_back ( a ) ;
-    elements .push_back ( b ) ;
-    
-    pair < float, float > point_on_the_element = calculate_the_point_of_intersection (
-        b .linear_equation, a .linear_equation ) ;
-    */
-    
-    
-    /*
-    cout << "floor: " << floor << endl ;
-    cout << "right_wall: " << right_wall << endl ;
-    cout << "right_edge: " << right_edge << endl ;
-    cout << "left_edge: " << left_edge << endl ;
-    cout << "top_right_corner_one: " << top_right_corner_one << endl ;
-    cout << "top_right_corner_two: " << top_right_corner_two << endl ;
-    cout << "ceiling: " << ceiling << endl ;    
-    cout << "little_ceiling: " << little_ceiling << endl ;
-    cout << "top_left_corner: " << top_left_corner << endl ;
-    */
+
     
     std::pair <float, float> coordinates_of_closest_point ;
 

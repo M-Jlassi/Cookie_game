@@ -1663,7 +1663,7 @@ void draw_map ( std :: vector < Attracting_element > elements_of_the_map )
             elements_of_the_map [ i ] .left_boundary_y,
             elements_of_the_map [ i ] .right_boundary_x,
             elements_of_the_map [ i ] .right_boundary_y,
-            al_map_rgb_f ( 0.35, 0.35, 0.35 ), 3 ) ;
+            al_map_rgb_f ( 0.35, 0.35, 0.65 ), 3 ) ;
     }
     
     return ;
